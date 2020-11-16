@@ -4,9 +4,9 @@ project(collaborative_text_editor)
 set(CMAKE_CXX_STANDARD 11)
 
 # source files in the project
-SET(SOURCE)
+SET(SOURCE src/editor/EditorWindow.cpp)
 # header files in the project, third party headers not included
-SET(HEADERS)
+SET(HEADERS include/EditorWindow.hpp)
 
 #Providing location of include directories containing header files
 include_directories("usr/include/")
