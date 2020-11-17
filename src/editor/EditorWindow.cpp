@@ -10,9 +10,12 @@ EditorWindow::EditorWindow(sf::Color background_color) {
 }
 
 void EditorWindow::InitializeEditorWindow() {
-  editor_window = new sf::RenderWindow(sf::VideoMode(1080, 720), "Co-Text", sf::Style::Default);
+  editor_window = new sf::RenderWindow(sf::VideoMode(1080, 720), "Co-Text", sf::Style::Titlebar | sf::Style::Close);
   editor_window->setVerticalSyncEnabled(true);
   editor_window->clear(background_color);
+
+  editor_content = new EditorContent();
+  editor_view = new EditorView(*editor_content, editor_window->getSize().x, editor_window->getSize().y);
 }
 
 void EditorWindow::StartEventLoop() {
@@ -27,15 +30,17 @@ void EditorWindow::UpdateEvents() {
   while (editor_window->pollEvent(event)) {
     if (event.type == sf::Event::Closed) {
       CloseWindow();
+      std::cout << "Event is " << event.type << std::endl;
       break;
     }
-    std::cout << "Event is " << event.type << std::endl;
   }
 }
 
 void EditorWindow::DrawUpdates() {
   editor_window->clear(background_color);
   // update window view
+  editor_window->setView(editor_view->GetCurrentView());
+  editor_view->DrawCursor(*editor_window);
   editor_window->display();
 }
 
