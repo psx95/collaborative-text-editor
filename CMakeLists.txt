@@ -13,7 +13,7 @@ include_directories("usr/include/")
 include_directories("./include/")
 
 #Providing location of 3rd Party libraries used in the project
-link_directories("/usr/lib/x86_64-linux-gnu/")
+#link_directories("/usr/lib/x86_64-linux-gnu/")
 
 message(STATUS ${CMAKE_SYSTEM_NAME})
 message(STATUS "BUILDING FOR ${CMAKE_SYSTEM}")
@@ -21,4 +21,4 @@ message(STATUS "BUILDING FOR ${CMAKE_SYSTEM}")
 add_executable(collaborative_text_editor ${SOURCE} ./src/main.cpp)
 
 #Providing the specific libraries to use. This line needs to come after adding executables
-target_link_libraries(collaborative_text_editor sfml-graphics sfml-window sfml-system sfml-network GL pthread)
+target_link_libraries(collaborative_text_editor ncurses pthread)
