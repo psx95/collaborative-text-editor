@@ -10,17 +10,22 @@ class EditorContent {
  private:
   // Text content
   Cursor cursor;
-  char* content;
+  std::string content;
+  std::vector<int> line_positions;
+
+  int GetCharacterPositionInStringFromEditor(int column_number, int line_number);
 
  public:
   explicit EditorContent();
 
   Cursor GetCursor();
-
   void InsertCharacterAtCursor(char x);
   void InsertCharacterAtPosition(int column_number, int line_number);
   void DeleteCharacterFromCursorPosition();
   void DeleteCharacterFromPosition(int column_number, int line_number);
+
+  std::string GetStringContent();
+  std::vector<int> &GetLinePositions();
 
 };
 

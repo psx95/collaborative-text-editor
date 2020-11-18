@@ -13,7 +13,7 @@ class Cursor {
   int max_line_number;
   int max_column_number;
 
-  void UpdateCursorPosition();
+  void UpdateCursorPosition(int _column_number, int _line_number);
 
  public:
   explicit Cursor();
@@ -21,7 +21,8 @@ class Cursor {
   void MoveCursorUp();
   void MoveCursorDown();
   void MoveCursorLeft();
-  void MoveCursorRight();
+  void MoveCursorRight(bool insert_char);
+  void MoveCursorToPosition(int _column_number, int _line_number);
   void UpdateMaxLineNumber(int updated_max_line_number);
   void UpdateMaxColumnNumber(int updated_max_column_number);
 };

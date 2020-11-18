@@ -11,18 +11,21 @@ class EditorView {
  private:
   EditorContent &content;
   sf::Font font;
-  float lineHeight;
-  float charWidth;
+  int font_size;
+  float line_height;
+  float char_width;
 
   sf::Color character_color;
   sf::View current_view;
 
-  float ComputeCharacterWidth(int fontSize);
+  float ComputeCharacterWidth();
+  void DrawCursor(sf::RenderWindow &render_window);
+  void DrawTextAtLine(sf::RenderWindow &render_window, std::string &text, int line_number);
 
  public:
   explicit EditorView(EditorContent &content, int view_width, int view_height);
 
-  void DrawCursor(sf::RenderWindow &render_window);
+  void Draw(sf::RenderWindow &render_window);
   void ScrollUp(sf::RenderWindow &render_window);
   void ScrollDown(sf::RenderWindow &render_window);
   void ScrollLeft(sf::RenderWindow &render_window);

@@ -16,6 +16,7 @@ void EditorWindow::InitializeEditorWindow() {
 
   editor_content = new EditorContent();
   editor_view = new EditorView(*editor_content, editor_window->getSize().x, editor_window->getSize().y);
+  input_handler = new InputHandler(*editor_content);
 }
 
 void EditorWindow::StartEventLoop() {
@@ -33,6 +34,7 @@ void EditorWindow::UpdateEvents() {
       std::cout << "Event is " << event.type << std::endl;
       break;
     }
+    input_handler->HandleEvents(*editor_view, *editor_window, event);
   }
 }
 
@@ -40,7 +42,7 @@ void EditorWindow::DrawUpdates() {
   editor_window->clear(background_color);
   // update window view
   editor_window->setView(editor_view->GetCurrentView());
-  editor_view->DrawCursor(*editor_window);
+  editor_view->Draw(*editor_window);
   editor_window->display();
 }
 
@@ -52,4 +54,6 @@ void EditorWindow::CloseWindow() {
 
 EditorWindow::~EditorWindow() {
   delete editor_window;
+  delete editor_view;
+  delete editor_content;
 }
