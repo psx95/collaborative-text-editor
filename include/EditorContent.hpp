@@ -18,9 +18,7 @@ class EditorContent {
 
   Cursor GetCursor();
   void InsertStringAtCursor(sf::String txt);
-  void InsertCharacterAtPosition(int column_number, int line_number);
   void DeleteCharacterFromCursorPosition();
-  void DeleteCharacterFromPosition(int column_number, int line_number);
   int GetNumberOfLines() const;
   sf::String GetLineAt(int line_number) const;
 
