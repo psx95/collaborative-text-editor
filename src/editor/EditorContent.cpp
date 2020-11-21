@@ -26,7 +26,7 @@ void EditorContent::InsertCharacterAtPosition(int column_number, int line_number
 }
 
 void EditorContent::DeleteCharacterFromCursorPosition() {
-  cursor.MoveCursorLeft();
+  //cursor.MoveCursorLeft();
 }
 
 void EditorContent::DeleteCharacterFromPosition(int column_number, int line_number) {
@@ -44,8 +44,11 @@ std::vector<int> &EditorContent::GetLinePositions() {
 void EditorContent::MoveCursorRight() {
   int characters_in_current_line = this->text_document.GetNumberOfCharactersInLine(this->cursor.GetLineNumber());
   if (this->cursor.GetColumnNumber() >= characters_in_current_line) {
-    int new_cursor_line = std::min(this->cursor.GetLineNumber() + 1, this->text_document.GetNumberOfTotalLines());
-    this->cursor.MoveCursorToPosition(0, new_cursor_line, true);
+    int new_cursor_line = std::min(this->cursor.GetLineNumber() + 1, this->text_document.GetNumberOfTotalLines() - 1);
+    // if cursor is already at the same line, no need to update => usually happens when cursor reaches the last line
+    if(new_cursor_line != cursor.GetLineNumber()) {
+      this->cursor.MoveCursorToPosition(0, new_cursor_line, true);
+    }
   } else {
     this->cursor.MoveCursorRight(true);
   }
@@ -56,7 +59,17 @@ void EditorContent::MoveCursorLeft() {
 }
 
 void EditorContent::MoveCursorUp() {
+  if (this->cursor.GetLineNumber() > 0) {
+    int number_characters_in_prev_line =
+        this->text_document.GetNumberOfCharactersInLine(this->cursor.GetLineNumber() - 1);
+    int current_character_position = this->cursor.GetColumnNumber();
 
+    if (current_character_position <= number_characters_in_prev_line) {
+      this->cursor.MoveCursorUp();
+    } else {
+      this->cursor.MoveCursorToPosition(number_characters_in_prev_line, this->cursor.GetLineNumber() - 1);
+    }
+  }
 }
 
 void EditorContent::MoveCursorDown() {

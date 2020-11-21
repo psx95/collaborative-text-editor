@@ -14,6 +14,8 @@ class InputHandler {
   EditorContent &editor_content;
   void HandleMouseEvents(EditorView &editor_view, sf::RenderWindow &render_window, sf::Event event);
   void HandleKeyboardEvents(EditorView &editor_view, sf::RenderWindow &render_window, sf::Event event);
+  void HandleTextEntryEvents(EditorView &editor_view, sf::RenderWindow &render_window, sf::Event event);
+  void HandleOtherKeyboardEvents(EditorView &editor_view, sf::RenderWindow &render_window, sf::Event event);
 
  public:
   explicit InputHandler(EditorContent &_editor_content);

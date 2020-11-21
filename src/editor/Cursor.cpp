@@ -68,3 +68,7 @@ int Cursor::GetLineNumber() const {
 int Cursor::GetColumnNumber() const {
   return this->column_number;
 }
+
+int Cursor::GetMaxColumnNumber() const {
+  return this->max_column_number;
+}

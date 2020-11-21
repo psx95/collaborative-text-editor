@@ -19,12 +19,32 @@ void InputHandler::HandleMouseEvents(EditorView &editor_view, sf::RenderWindow &
 void InputHandler::HandleKeyboardEvents(EditorView &editor_view, sf::RenderWindow &render_window, sf::Event event) {
   //std::cout << "Event type is " << event.type << std::endl;
   if (event.type == sf::Event::TextEntered) {
-    if (event.text.unicode == 8 || event.text.unicode == 127) {
-      // filter out backspace and delete and treat them similarly
-      editor_content.DeleteCharacterFromCursorPosition();
-    } else if (event.text.unicode >= 32 || event.text.unicode == 13) {
-      // handle only ascii characters
-      editor_content.InsertStringAtCursor(sf::String(event.text.unicode));
-    }
+    HandleTextEntryEvents(editor_view, render_window, event);
+  } else if (event.type == sf::Event::KeyPressed) {
+    HandleOtherKeyboardEvents(editor_view, render_window, event);
+  }
+}
+
+void InputHandler::HandleTextEntryEvents(EditorView &editor_view, sf::RenderWindow &render_window, sf::Event event) {
+  if (event.text.unicode == 8 || event.text.unicode == 127) {
+    // filter out backspace and delete and treat them similarly
+    editor_content.DeleteCharacterFromCursorPosition();
+  } else if (event.text.unicode >= 32 || event.text.unicode == 13) {
+    // handle only ascii characters
+    editor_content.InsertStringAtCursor(sf::String(event.text.unicode));
+  }
+}
+
+void InputHandler::HandleOtherKeyboardEvents(EditorView &editor_view,
+                                             sf::RenderWindow &render_window,
+                                             sf::Event event) {
+  if (event.key.code == sf::Keyboard::Up) {
+    editor_content.MoveCursorUp();
+  } else if (event.key.code == sf::Keyboard::Left) {
+    editor_content.MoveCursorLeft();
+  } else if (event.key.code == sf::Keyboard::Right) {
+    editor_content.MoveCursorRight();
+  } else if (event.key.code == sf::Keyboard::Down) {
+    editor_content.MoveCursorDown();
   }
 }

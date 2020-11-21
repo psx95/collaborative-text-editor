@@ -39,6 +39,7 @@ void TextFileContent::AddTextAtPosition(sf::String &text, int line_number, int c
     if (text[i] == '\n' || text[i] == 13) {
       int new_line_start_position = text_insert_position + i + 1; // +1 because the new line will start after \n
       // insert the new line character to the line positions
+      // lower_bound will find a position between begin and end that is just less than new_line_start_position
       auto sorted_position =
           std::lower_bound(this->line_positions.begin(), this->line_positions.end(), new_line_start_position);
       this->line_positions.insert(sorted_position, new_line_start_position);
@@ -54,7 +55,6 @@ int TextFileContent::GetStringPositionFromCursorPosition(int line_number, int co
   if (line_number >= this->line_positions.size()) {
     std::cerr << " Unable to resolve Cursor Position to string position " << std::endl;
   }
-  std::cout << "line position size " << line_positions.size() << std::endl;
   return this->line_positions.at(line_number) + column_number;
 }
 
@@ -63,6 +63,7 @@ int TextFileContent::GetNumberOfCharactersInLine(int line_number) {
     // last line
     return (int) this->string_content.getSize() - this->line_positions.at(line_number);
   } else {
+    int size = line_positions.size();
     return this->line_positions.at(line_number + 1) - this->line_positions.at(line_number) - 1;
   }
 }

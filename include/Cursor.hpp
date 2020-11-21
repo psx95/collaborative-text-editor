@@ -20,6 +20,7 @@ class Cursor {
   std::pair<int, int> GetCurrentPosition();
   int GetLineNumber() const;
   int GetColumnNumber() const;
+  int GetMaxColumnNumber() const;
   void MoveCursorUp();
   void MoveCursorDown();
   void MoveCursorLeft(bool update_max_column = false);
