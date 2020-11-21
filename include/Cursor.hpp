@@ -18,11 +18,13 @@ class Cursor {
  public:
   explicit Cursor();
   std::pair<int, int> GetCurrentPosition();
+  int GetLineNumber() const;
+  int GetColumnNumber() const;
   void MoveCursorUp();
   void MoveCursorDown();
-  void MoveCursorLeft();
-  void MoveCursorRight(bool insert_char);
-  void MoveCursorToPosition(int _column_number, int _line_number);
+  void MoveCursorLeft(bool update_max_column = false);
+  void MoveCursorRight(bool update_max_column = false);
+  void MoveCursorToPosition(int _column_number, int _line_number, bool update_max_column = false);
   void UpdateMaxLineNumber(int updated_max_line_number);
   void UpdateMaxColumnNumber(int updated_max_column_number);
 };

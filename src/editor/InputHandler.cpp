@@ -24,7 +24,7 @@ void InputHandler::HandleKeyboardEvents(EditorView &editor_view, sf::RenderWindo
       editor_content.DeleteCharacterFromCursorPosition();
     } else if (event.text.unicode >= 32 || event.text.unicode == 13) {
       // handle only ascii characters
-      editor_content.InsertCharacterAtCursor(static_cast<char>(event.text.unicode));
+      editor_content.InsertStringAtCursor(sf::String(event.text.unicode));
     }
   }
 }

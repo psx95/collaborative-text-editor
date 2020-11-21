@@ -13,6 +13,7 @@ class EditorWindow {
   sf::RenderWindow *editor_window{};
   EditorView *editor_view{};
   EditorContent *editor_content{};
+  TextFileContent *text_file_content{};
   InputHandler *input_handler{};
   sf::Color background_color{};
 

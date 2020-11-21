@@ -14,7 +14,8 @@ void EditorWindow::InitializeEditorWindow() {
   editor_window->setVerticalSyncEnabled(true);
   editor_window->clear(background_color);
 
-  editor_content = new EditorContent();
+  text_file_content = new TextFileContent();
+  editor_content = new EditorContent(*text_file_content);
   editor_view = new EditorView(*editor_content, editor_window->getSize().x, editor_window->getSize().y);
   input_handler = new InputHandler(*editor_content);
 }

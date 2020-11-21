@@ -4,7 +4,6 @@
 
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
-#include <sstream>
 #include <iostream>
 #include "EditorView.hpp"
 #include "StringUtils.hpp"
@@ -47,29 +46,17 @@ sf::View EditorView::GetCurrentView() const {
 }
 
 void EditorView::Draw(sf::RenderWindow &render_window) {
-  std::string text = content.GetStringContent();
-  std::stringstream string_stream(text);
-  if (text.c_str() != nullptr && !text.empty()) {
-    std::string current_line;
-    std::vector<int> line_positions = content.GetLinePositions();
-    for (int i = 0; i < line_positions.size(); i++) {
-      int line_begin = line_positions.at(i);
-      if (text.at(line_begin) == '\n' || text.at(line_begin) == 13) {
-        line_begin++;
-      }
-      int line_end = (i + 1) < line_positions.size() ? (int) line_positions.at(i + 1) : (int) text.length();
-      current_line = text.substr(line_begin, line_end);
-      std::cout << "current line -> " << current_line << std::endl;
-      DrawTextAtLine(render_window, current_line, i);
-    }
+  for (int line = 0; line < this->content.GetNumberOfLines(); line++) {
+    sf::String current_line = this->content.GetLineAt(line);
+    DrawTextAtLine(render_window, current_line, line);
   }
   DrawCursor(render_window);
-  std::cout << "text -> " << content.GetStringContent() << std::endl;
+  //std::cout << "text -> " << content.GetStringContent() << std::endl;
 }
 
-void EditorView::DrawTextAtLine(sf::RenderWindow &render_window, std::string &text, int line_number) {
-  trim(text);
+void EditorView::DrawTextAtLine(sf::RenderWindow &render_window, sf::String &text, int line_number) {
   sf::Text text_draw;
+  text_draw.setFillColor(this->character_color);
   text_draw.setFont(font);
   text_draw.setString(text);
   text_draw.setCharacterSize(font_size);

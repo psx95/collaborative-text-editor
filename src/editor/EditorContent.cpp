@@ -4,26 +4,20 @@
 
 #include <iostream>
 #include "EditorContent.hpp"
-EditorContent::EditorContent() {
+EditorContent::EditorContent(TextFileContent &text_file_content) : text_document(text_file_content) {
   this->cursor = Cursor();
-  this->content = "";
-  this->line_positions.push_back(0);
 }
 
 Cursor EditorContent::GetCursor() {
   return this->cursor;
 }
 
-void EditorContent::InsertCharacterAtCursor(char x) {
-  std::pair<int, int> cursor_position = cursor.GetCurrentPosition();
-  int content_position = GetCharacterPositionInStringFromEditor(cursor_position.first, cursor_position.second);
-  content.insert(content_position,1, x);
-  if (x == '\n' || x == 13) {
-    line_positions.push_back(content_position);
-    std::sort(line_positions.begin(), line_positions.end());
-    cursor.MoveCursorToPosition(0, cursor_position.second + 1);
-  } else {
-    cursor.MoveCursorRight(true);
+void EditorContent::InsertStringAtCursor(sf::String txt) {
+  int line_number = this->cursor.GetLineNumber();
+  int column_number = this->cursor.GetColumnNumber();
+  this->text_document.AddTextAtPosition(txt, line_number, column_number);
+  for (int i = 0; i < txt.getSize(); i++) {
+    this->MoveCursorRight();
   }
 }
 
@@ -39,18 +33,40 @@ void EditorContent::DeleteCharacterFromPosition(int column_number, int line_numb
 
 }
 
-int EditorContent::GetCharacterPositionInStringFromEditor(int column_number, int line_number) {
-  if (line_number >= line_positions.size()) {
-    std::cerr << "Error cannot get position for this line " << std::endl;
-  }
-  //std::cout << "Character position in String " << line_positions.at(line_number) + column_number << std::endl;
-  return line_positions.at(line_number) + column_number;
-}
-
 std::string EditorContent::GetStringContent() {
-  return this->content;
+
 }
 
 std::vector<int> &EditorContent::GetLinePositions() {
-  return this->line_positions;
+
+}
+
+void EditorContent::MoveCursorRight() {
+  int characters_in_current_line = this->text_document.GetNumberOfCharactersInLine(this->cursor.GetLineNumber());
+  if (this->cursor.GetColumnNumber() >= characters_in_current_line) {
+    int new_cursor_line = std::min(this->cursor.GetLineNumber() + 1, this->text_document.GetNumberOfTotalLines());
+    this->cursor.MoveCursorToPosition(0, new_cursor_line, true);
+  } else {
+    this->cursor.MoveCursorRight(true);
+  }
+}
+
+void EditorContent::MoveCursorLeft() {
+
+}
+
+void EditorContent::MoveCursorUp() {
+
+}
+
+void EditorContent::MoveCursorDown() {
+
+}
+
+int EditorContent::GetNumberOfLines() const {
+  return this->text_document.GetNumberOfTotalLines();
+}
+
+sf::String EditorContent::GetLineAt(int line_number) const {
+  return text_document.GetLine(line_number);
 }

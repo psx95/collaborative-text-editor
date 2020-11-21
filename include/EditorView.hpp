@@ -20,7 +20,7 @@ class EditorView {
 
   float ComputeCharacterWidth();
   void DrawCursor(sf::RenderWindow &render_window);
-  void DrawTextAtLine(sf::RenderWindow &render_window, std::string &text, int line_number);
+  void DrawTextAtLine(sf::RenderWindow &render_window, sf::String &text, int line_number);
 
  public:
   explicit EditorView(EditorContent &content, int view_width, int view_height);

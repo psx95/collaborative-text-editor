@@ -6,23 +6,29 @@
 #define COLLABORATIVE_TEXT_EDITOR_SRC_EDITOR_EDITORCONTENT_HPP_
 
 #include "Cursor.hpp"
+#include "TextFileContent.hpp"
 class EditorContent {
  private:
   // Text content
   Cursor cursor;
-  std::string content;
-  std::vector<int> line_positions;
-
-  int GetCharacterPositionInStringFromEditor(int column_number, int line_number);
+  TextFileContent &text_document;
 
  public:
-  explicit EditorContent();
+  explicit EditorContent(TextFileContent &text_document);
 
   Cursor GetCursor();
-  void InsertCharacterAtCursor(char x);
+  void InsertStringAtCursor(sf::String txt);
   void InsertCharacterAtPosition(int column_number, int line_number);
   void DeleteCharacterFromCursorPosition();
   void DeleteCharacterFromPosition(int column_number, int line_number);
+  int GetNumberOfLines() const;
+  sf::String GetLineAt(int line_number) const;
+
+  void MoveCursorRight();
+  void MoveCursorLeft();
+  void MoveCursorUp();
+  void MoveCursorDown();
+
 
   std::string GetStringContent();
   std::vector<int> &GetLinePositions();
