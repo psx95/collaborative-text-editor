@@ -16,7 +16,7 @@ EditorView::EditorView(EditorContent &editor_content, int width, int height) : c
   this->char_width = ComputeCharacterWidth();
   this->line_height = font_size;
   this->margin_line_number_x = 50;
-  this->current_view = sf::View(sf::FloatRect(-55, 0, width, height));
+  SetViewBounds(width, height);
 }
 
 void EditorView::ScrollUp(sf::RenderWindow &render_window) {
@@ -113,4 +113,8 @@ void EditorView::DrawLineNumberBox(sf::RenderWindow &render_window, int line_num
 
   render_window.draw(margin_box);
   render_window.draw(line_number_text);
+}
+
+void EditorView::SetViewBounds(unsigned int width, unsigned int height) {
+  this->current_view = sf::View(sf::FloatRect(-55, 0, width, height));
 }

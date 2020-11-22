@@ -67,6 +67,14 @@ class EditorView {
    * @return The current view object.
    */
   sf::View GetCurrentView() const;
+
+  /*!
+   * @brief This method sets initializes the current view with specified bounds.
+   * @details This method must be called again should the window containing this view is resized.
+   * @param width The width of the view bounds.
+   * @param height The height of the view bounds.
+   */
+  void SetViewBounds(unsigned int width, unsigned int height);
 };
 
 #endif //COLLABORATIVE_TEXT_EDITOR_SRC_EDITOR_EDITORVIEW_HPP_

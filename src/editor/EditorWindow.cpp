@@ -10,7 +10,7 @@ EditorWindow::EditorWindow(sf::Color background_color) {
 }
 
 void EditorWindow::InitializeEditorWindow() {
-  editor_window = new sf::RenderWindow(sf::VideoMode(1080, 720), "Co-Text", sf::Style::Titlebar | sf::Style::Close);
+  editor_window = new sf::RenderWindow(sf::VideoMode(1080, 720), "Co-Text", sf::Style::Default);
   editor_window->setVerticalSyncEnabled(true);
   editor_window->clear(background_color);
 
@@ -34,6 +34,8 @@ void EditorWindow::UpdateEvents() {
       CloseWindow();
       std::cout << "Event is " << event.type << std::endl;
       break;
+    } else if (event.type == sf::Event::Resized) {
+      editor_view->SetViewBounds(event.size.width, event.size.height);
     }
     input_handler->HandleEvents(*editor_view, *editor_window, event);
   }
