@@ -73,7 +73,16 @@ void EditorContent::MoveCursorUp() {
 }
 
 void EditorContent::MoveCursorDown() {
+  if (this->cursor.GetLineNumber() < this->text_document.GetNumberOfTotalLines() - 1) {
+    int current_char_position = this->cursor.GetColumnNumber();
+    int max_char_position_next_line = this->text_document.GetNumberOfCharactersInLine(this->cursor.GetLineNumber() + 1);
 
+    if (current_char_position > max_char_position_next_line) {
+      this->cursor.MoveCursorToPosition(max_char_position_next_line, this->cursor.GetLineNumber() + 1);
+    } else {
+      this->cursor.MoveCursorDown();
+    }
+  }
 }
 
 int EditorContent::GetNumberOfLines() const {

@@ -24,9 +24,6 @@ void Cursor::MoveCursorUp() {
 }
 
 void Cursor::MoveCursorDown() {
-  if (line_number >= max_line_number) {
-    return;
-  }
   UpdateCursorPosition(this->column_number, this->line_number + 1);
 }
 
