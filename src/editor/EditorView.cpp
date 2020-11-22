@@ -11,11 +11,12 @@ EditorView::EditorView(EditorContent &editor_content, int width, int height) : c
   if (!this->font.loadFromFile("fonts/DejaVuSansMono.ttf")) {
     exit(-1);
   }
-  this->character_color = sf::Color(223,227,230);
+  this->character_color = sf::Color(223, 227, 230);
   this->font_size = 16;
   this->char_width = ComputeCharacterWidth();
   this->line_height = font_size;
-  this->current_view = sf::View(sf::FloatRect(0, 0, width, height));
+  this->margin_line_number_x = 50;
+  this->current_view = sf::View(sf::FloatRect(-55, 0, width, height));
 }
 
 void EditorView::ScrollUp(sf::RenderWindow &render_window) {
@@ -48,6 +49,7 @@ sf::View EditorView::GetCurrentView() const {
 void EditorView::Draw(sf::RenderWindow &render_window) {
   for (int line = 0; line < this->content.GetNumberOfLines(); line++) {
     sf::String current_line = this->content.GetLineAt(line);
+    DrawLineNumberBox(render_window, line);
     DrawTextAtLine(render_window, current_line, line);
   }
   DrawCursor(render_window);
@@ -94,4 +96,21 @@ std::pair<int, int> EditorView::ConvertScreenCoordsToTextCoords(float screen_x_p
         std::min(computed_column_number, this->content.GetNumberOfCharactersAtLine(computed_line_number));
   }
   return std::pair<int, int>{computed_column_number, computed_line_number};
+}
+
+void EditorView::DrawLineNumberBox(sf::RenderWindow &render_window, int line_number) {
+  sf::Text line_number_text;
+  line_number_text.setFillColor(sf::Color::Red);
+  line_number_text.setStyle(sf::Text::Bold);
+  line_number_text.setFont(this->font);
+  line_number_text.setString(std::to_string(line_number + 1));
+  line_number_text.setCharacterSize(this->font_size - 1);
+  line_number_text.setPosition(-this->margin_line_number_x, (float) (font_size * line_number));
+
+  sf::RectangleShape margin_box(sf::Vector2f(this->margin_line_number_x - 5, font_size));
+  margin_box.setFillColor(sf::Color(68, 72, 68));
+  margin_box.setPosition(-this->margin_line_number_x, (float) (font_size * line_number));
+
+  render_window.draw(margin_box);
+  render_window.draw(line_number_text);
 }

@@ -20,6 +20,7 @@ class EditorView {
   int font_size; // the size of the font in which the text needs to be displayed
   float line_height; // the height of each line in the text
   float char_width; // the width of a single character in a particular font
+  float margin_line_number_x;
 
   sf::Color character_color; // the current character color
   sf::View current_view; // the current view object that holds the rendered view
@@ -28,6 +29,8 @@ class EditorView {
   void DrawCursor(sf::RenderWindow &render_window); // draws the cursor visual on screen
   // draws text at a given line number
   void DrawTextAtLine(sf::RenderWindow &render_window, sf::String &text, int line_number);
+  // draws the rectangle box containing line number
+  void DrawLineNumberBox(sf::RenderWindow &render_window, int line_number);
 
  public:
   /*!
