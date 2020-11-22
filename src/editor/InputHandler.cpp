@@ -19,6 +19,14 @@ void InputHandler::HandleMouseEvents(EditorView &editor_view, sf::RenderWindow &
     std::pair<int, int>
         cursor_position = editor_view.ConvertScreenCoordsToTextCoords(mouse_position_window.x, mouse_position_window.y);
     editor_content.SetCursorAtPosition(cursor_position.first, cursor_position.second);
+  } else if (event.type == sf::Event::MouseWheelScrolled) {
+    if (event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel) {
+      if (event.mouseWheelScroll.delta > 0) {
+        editor_view.ScrollUp(render_window);
+      } else {
+        editor_view.ScrollDown(render_window);
+      }
+    }
   }
 }
 

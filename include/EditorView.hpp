@@ -20,7 +20,8 @@ class EditorView {
   int font_size; // the size of the font in which the text needs to be displayed
   float line_height; // the height of each line in the text
   float char_width; // the width of a single character in a particular font
-  float margin_line_number_x;
+  float margin_line_number_x; // the x axis margin left for line numbers
+  float vertical_scroll_amount; // the amount of screen pixels that scroll in a single vertical scroll input
 
   sf::Color character_color; // the current character color
   sf::View current_view; // the current view object that holds the rendered view

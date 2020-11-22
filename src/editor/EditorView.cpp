@@ -16,15 +16,25 @@ EditorView::EditorView(EditorContent &editor_content, int width, int height) : c
   this->char_width = ComputeCharacterWidth();
   this->line_height = font_size;
   this->margin_line_number_x = 50;
+  this->vertical_scroll_amount = 25;
   SetViewBounds(width, height);
 }
 
 void EditorView::ScrollUp(sf::RenderWindow &render_window) {
-  // TODO : Update View
+  float window_height = render_window.getView().getSize().y;
+  auto current_view_position = this->current_view.getCenter();
+  if (current_view_position.y - window_height / 2 > 0) {
+    this->current_view.move(0, -this->vertical_scroll_amount);
+  }
 }
 
 void EditorView::ScrollDown(sf::RenderWindow &render_window) {
-  // TODO : Update View
+  float window_height = render_window.getView().getSize().y;
+  auto current_view_position = this->current_view.getCenter();
+  float bottom_view_limit_px = (float) this->content.GetNumberOfLines() * line_height;
+  if ((current_view_position.y + window_height / 2) < (bottom_view_limit_px + vertical_scroll_amount)) {
+    this->current_view.move(0, this->vertical_scroll_amount);
+  }
 }
 
 void EditorView::ScrollLeft(sf::RenderWindow &render_window) {
