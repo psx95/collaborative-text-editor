@@ -5,7 +5,6 @@
 #include <iostream>
 #include "InputHandler.hpp"
 InputHandler::InputHandler(EditorContent &_editor_content) : editor_content(_editor_content) {
-
 }
 
 void InputHandler::HandleEvents(EditorView &editor_view, sf::RenderWindow &render_window, sf::Event event) {
@@ -24,7 +23,6 @@ void InputHandler::HandleMouseEvents(EditorView &editor_view, sf::RenderWindow &
 }
 
 void InputHandler::HandleKeyboardEvents(EditorView &editor_view, sf::RenderWindow &render_window, sf::Event event) {
-  //std::cout << "Event type is " << event.type << std::endl;
   if (event.type == sf::Event::TextEntered) {
     HandleTextEntryEvents(editor_view, render_window, event);
   } else if (event.type == sf::Event::KeyPressed) {

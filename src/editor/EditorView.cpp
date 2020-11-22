@@ -11,7 +11,7 @@ EditorView::EditorView(EditorContent &editor_content, int width, int height) : c
   if (!this->font.loadFromFile("fonts/DejaVuSansMono.ttf")) {
     exit(-1);
   }
-  this->character_color = sf::Color::White;
+  this->character_color = sf::Color(223,227,230);
   this->font_size = 16;
   this->char_width = ComputeCharacterWidth();
   this->line_height = font_size;
@@ -70,7 +70,7 @@ void EditorView::DrawCursor(sf::RenderWindow &window) {
   float cursor_column = cursor_position.first;
   float cursor_row = cursor_position.second;
   sf::RectangleShape cursor_shape(sf::Vector2f(cursor_width, this->line_height));
-  cursor_shape.setFillColor(character_color);
+  cursor_shape.setFillColor(sf::Color::White);
   cursor_shape.setPosition(cursor_column * char_width, cursor_row * line_height + y_offset);
   window.draw(cursor_shape);
 }
