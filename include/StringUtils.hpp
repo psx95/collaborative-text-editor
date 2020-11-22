@@ -1,5 +1,6 @@
 //
 // Created by psx95 on 11/18/20.
+// Code Credits: https://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring
 //
 
 #include <algorithm>
