@@ -48,7 +48,17 @@ void TextFileContent::AddTextAtPosition(sf::String &text, int line_number, int c
 }
 
 void TextFileContent::RemoveTextFromPosition(int amount, int line_number, int column_number) {
-
+  int cursor_current_position = GetStringPositionFromCursorPosition(line_number, column_number);
+  int text_delete_start_position = std::max(0, cursor_current_position - amount);
+  this->string_content.erase(text_delete_start_position, amount);
+  // update line positions
+  this->line_positions.clear();
+  this->line_positions.push_back(0);
+  for (int i = 0; i < this->string_content.getSize(); i++) {
+    if (this->string_content[i] == '\n' || this->string_content[i] == 13) {
+      this->line_positions.push_back(i + 1); // line starts after \n
+    }
+  }
 }
 
 int TextFileContent::GetStringPositionFromCursorPosition(int line_number, int column_number) {

@@ -21,8 +21,13 @@ void EditorContent::InsertStringAtCursor(sf::String txt) {
   }
 }
 
-void EditorContent::DeleteCharacterFromCursorPosition() {
-  //cursor.MoveCursorLeft();
+void EditorContent::DeleteCharacterFromCursorPosition(int number_of_characters) {
+  int line_number = this->cursor.GetLineNumber();
+  int column_number = this->cursor.GetColumnNumber();
+  this->text_document.RemoveTextFromPosition(number_of_characters, line_number, column_number);
+  for (int i = 0; i < number_of_characters; i++) {
+    this->MoveCursorLeft();
+  }
 }
 
 std::string EditorContent::GetStringContent() {
