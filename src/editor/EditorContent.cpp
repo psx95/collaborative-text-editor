@@ -39,10 +39,10 @@ void EditorContent::MoveCursorRight() {
     int new_cursor_line = std::min(this->cursor.GetLineNumber() + 1, this->text_document.GetNumberOfTotalLines() - 1);
     // if cursor is already at the same line, no need to update => usually happens when cursor reaches the last line
     if (new_cursor_line != cursor.GetLineNumber()) {
-      this->cursor.MoveCursorToPosition(0, new_cursor_line, true);
+      this->cursor.MoveCursorToPosition(0, new_cursor_line);
     }
   } else {
-    this->cursor.MoveCursorRight(true);
+    this->cursor.MoveCursorRight();
   }
 }
 

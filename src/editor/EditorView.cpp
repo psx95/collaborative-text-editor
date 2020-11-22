@@ -51,7 +51,6 @@ void EditorView::Draw(sf::RenderWindow &render_window) {
     DrawTextAtLine(render_window, current_line, line);
   }
   DrawCursor(render_window);
-  //std::cout << "text -> " << content.GetStringContent() << std::endl;
 }
 
 void EditorView::DrawTextAtLine(sf::RenderWindow &render_window, sf::String &text, int line_number) {
