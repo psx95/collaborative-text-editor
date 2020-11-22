@@ -43,6 +43,17 @@ class EditorView {
    * @param render_window The GUI window on which the view will be rendered.
    */
   void Draw(sf::RenderWindow &render_window);
+
+  /*!
+   * @brief This method takes the pixel coordinates (mapped to the current window) and converts them into line number
+   * and column number document coordinates.
+   * @param screen_x_pos The x-coordinate on the screen.
+   * @param screen_y_pos The y-coordinate on the screen.
+   * @return The document coordinates as a std::pair of ints. The first element of the pair is column number, the second
+   * element is the line_number.
+   */
+  std::pair<int, int> ConvertScreenCoordsToTextCoords(float screen_x_pos, float screen_y_pos);
+
   void ScrollUp(sf::RenderWindow &render_window);
   void ScrollDown(sf::RenderWindow &render_window);
   void ScrollLeft(sf::RenderWindow &render_window);

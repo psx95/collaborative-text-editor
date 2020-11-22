@@ -51,6 +51,13 @@ class EditorContent {
   int GetNumberOfLines() const;
 
   /*!
+   * @brief This method returns the number of characters contained in a line at a given position
+   * @param line_number The line number that is used to determine the position of the line.
+   * @return The number of characters contained in the line at the specified line number.
+   */
+  int GetNumberOfCharactersAtLine(int line_number) const;
+
+  /*!
    * @brief This method is responsible for returning the nth line from the visible text on the screen.
    * @param line_number The line position for the line that needs to be retrieved.
    * @return The retrieved line at a given position as a String.
@@ -82,6 +89,13 @@ class EditorContent {
    * @details Moving cursor down will not be possible if the cursor is already at the last line of the text.
    */
   void MoveCursorDown();
+
+  /*!
+   * @brief This method is used to move the cursor to a particular position.
+   * @param column_number The column number of the new cursor position.
+   * @param line_number The line number of the new cursor position.
+   */
+  void SetCursorAtPosition(int column_number, int line_number);
 
   std::string GetStringContent();
   std::vector<int> &GetLinePositions();

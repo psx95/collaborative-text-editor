@@ -97,3 +97,11 @@ int EditorContent::GetNumberOfLines() const {
 sf::String EditorContent::GetLineAt(int line_number) const {
   return text_document.GetLine(line_number);
 }
+
+void EditorContent::SetCursorAtPosition(int column_number, int line_number) {
+  this->cursor.MoveCursorToPosition(column_number, line_number);
+}
+
+int EditorContent::GetNumberOfCharactersAtLine(int line_number) const {
+  return this->text_document.GetNumberOfCharactersInLine(line_number);
+}

@@ -74,3 +74,24 @@ void EditorView::DrawCursor(sf::RenderWindow &window) {
   cursor_shape.setPosition(cursor_column * char_width, cursor_row * line_height + y_offset);
   window.draw(cursor_shape);
 }
+
+std::pair<int, int> EditorView::ConvertScreenCoordsToTextCoords(float screen_x_pos, float screen_y_pos) {
+  int computed_line_number = (int) (screen_y_pos / this->line_height);
+  int computed_column_number = 0;
+
+  int last_line_number = this->content.GetNumberOfLines() - 1;
+
+  if (computed_line_number < 0) {
+    computed_line_number = 0;
+    computed_column_number = 0;
+  } else if (computed_line_number > last_line_number) {
+    computed_line_number = last_line_number;
+    computed_column_number = this->content.GetNumberOfCharactersAtLine(computed_line_number);
+  } else {
+    computed_column_number = (int) (screen_x_pos / this->char_width); // will not work if tab characters are supported
+    computed_column_number = std::max(0, computed_column_number);
+    computed_column_number =
+        std::min(computed_column_number, this->content.GetNumberOfCharactersAtLine(computed_line_number));
+  }
+  return std::pair<int, int>{computed_column_number, computed_line_number};
+}

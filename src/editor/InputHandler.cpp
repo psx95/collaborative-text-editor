@@ -14,6 +14,13 @@ void InputHandler::HandleEvents(EditorView &editor_view, sf::RenderWindow &rende
 }
 
 void InputHandler::HandleMouseEvents(EditorView &editor_view, sf::RenderWindow &render_window, sf::Event event) {
+  if (event.type == sf::Event::MouseButtonPressed) {
+    sf::Vector2<int> mouse_position_raw = sf::Mouse::getPosition(render_window);
+    sf::Vector2f mouse_position_window = render_window.mapPixelToCoords(mouse_position_raw);
+    std::pair<int, int>
+        cursor_position = editor_view.ConvertScreenCoordsToTextCoords(mouse_position_window.x, mouse_position_window.y);
+    editor_content.SetCursorAtPosition(cursor_position.first, cursor_position.second);
+  }
 }
 
 void InputHandler::HandleKeyboardEvents(EditorView &editor_view, sf::RenderWindow &render_window, sf::Event event) {
