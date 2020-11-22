@@ -7,7 +7,6 @@
 Cursor::Cursor() {
   this->line_number = 0;
   this->column_number = 0;
-  this->max_column_number = 0;
 }
 
 void Cursor::UpdateCursorPosition(int _column_number, int _line_number) {
@@ -27,9 +26,6 @@ void Cursor::MoveCursorDown() {
 }
 
 void Cursor::MoveCursorLeft() {
-  if (column_number <= 0) {
-    return;
-  }
   UpdateCursorPosition(this->column_number - 1, this->line_number);
 }
 
@@ -37,15 +33,12 @@ void Cursor::MoveCursorRight() {
   UpdateCursorPosition(this->column_number + 1, this->line_number);
 }
 
-std::pair<int, int> Cursor::GetCurrentPosition() {
+std::pair<int, int> Cursor::GetCurrentPosition() const {
   return {this->column_number, this->line_number};
 }
 
-void Cursor::MoveCursorToPosition(int _column_number, int _line_number, bool update_max_column) {
+void Cursor::MoveCursorToPosition(int _column_number, int _line_number) {
   this->UpdateCursorPosition(_column_number, _line_number);
-  if (update_max_column) {
-    this->max_column_number = _column_number;
-  }
 }
 int Cursor::GetLineNumber() const {
   return this->line_number;
