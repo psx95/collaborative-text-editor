@@ -4,7 +4,8 @@
 
 #include <iostream>
 #include "ApplicationController.hpp"
-ApplicationController::ApplicationController(EditorWindow &editor) : editor_window(editor) {
+ApplicationController::ApplicationController(EditorWindow &editor, CRDTManager &crdt)
+    : editor_window(editor), crdt_manager(crdt) {
   Init();
 }
 

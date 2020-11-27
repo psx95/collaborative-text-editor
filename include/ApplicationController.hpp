@@ -6,15 +6,17 @@
 #define COLLABORATIVE_TEXT_EDITOR_SRC_APPLICATIONCONTROLLER_HPP_
 
 #include "EditorWindow.hpp"
+#include "CRDTManager.hpp"
 
 class ApplicationController : public EditorCallbacks {
  private:
   EditorWindow &editor_window;
+  CRDTManager &crdt_manager;
 
   void Init();
 
  public:
-  explicit ApplicationController(EditorWindow &editor);
+  explicit ApplicationController(EditorWindow &editor, CRDTManager &crdt);
 
   void Go();
 
