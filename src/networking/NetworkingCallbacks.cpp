@@ -5,10 +5,6 @@
 #include <CustomMessageException.hpp>
 #include "NetworkingCallbacks.hpp"
 
-void NetworkingCallbacks::OnRemoteInsertReceive(sf::Packet &packet) {
+void NetworkingCallbacks::OnRemoteOperationReceive(struct CRDTAction &crdt_action) {
   throw CustomMessageException("OnRemoteInsertReceive not implemented yet!");
-}
-
-void NetworkingCallbacks::OnRemoteDeleteReceive(sf::Packet &packet) {
-  throw CustomMessageException("OnRemoteDeleteReceive not implemented yet!");
 }

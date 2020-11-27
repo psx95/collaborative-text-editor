@@ -22,14 +22,12 @@ void UDPClient::StartListeningThread() {
   // call handle packet from here
 }
 
-void UDPClient::BroadcastPacketToAllConnectedPeers(sf::Packet &packet) {
+void UDPClient::BroadcastActionToAllConnectedPeers(CRDTAction &crdt_action) {
 
 }
 
 void UDPClient::HandleIncomingPacket(sf::Packet &packet) {
-  // TODO: Based on Operation contained in packet, call either insert or delete.
-  //client_callbacks->OnRemoteInsertReceive(packet);
-  //client_callbacks->OnRemoteDeleteReceive(packet);
+  //client_callbacks->OnRemoteOperationReceive(<packet parsed to get CRDTAction>);
 }
 
 void UDPClient::ShutdownClient() {

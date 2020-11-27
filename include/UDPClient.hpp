@@ -34,10 +34,10 @@ class UDPClient {
   explicit UDPClient(unsigned short port, std::vector<struct PeerAddress> &peer_addresses);
 
   /*!
-   * @brief This method will broadcast a single packet (should contain a single Operation) to all connected clients
-   * @param packet The packet that needs to be broadcast to connected client.
+   * @brief This method will broadcast a single packet (should contain a single Operation) to all connected clients.
+   * @param crdt_action The CRDTAction that needs to be reflected on all connected peers.
    */
-  void BroadcastPacketToAllConnectedPeers(sf::Packet &packet);
+  void BroadcastActionToAllConnectedPeers(struct CRDTAction &crdt_action);
 
   /*!
    * @brief This method sets the NetworkingCallbacks for the UpdClient.

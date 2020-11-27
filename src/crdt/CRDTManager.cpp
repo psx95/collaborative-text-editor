@@ -9,11 +9,11 @@ CRDTManager::CRDTManager(int site_id) {
   this->site_id = site_id;
 }
 
-struct CRDTAction CRDTManager::GenerateCRDTActionForLocalInsert(std::string &text, int index, CRDTOperation operation) {
+struct CRDTAction CRDTManager::GenerateCRDTActionForLocalInsert(std::string &text, int index) {
   throw CustomMessageException("Not Implemented yet");
 }
 
-struct CRDTAction CRDTManager::GenerateCRDTActionForLocalDelete(int index, CRDTOperation operation) {
+struct CRDTAction CRDTManager::GenerateCRDTActionForLocalDelete(int index) {
   throw CustomMessageException("Not implemented yet");
 }
 

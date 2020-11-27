@@ -13,9 +13,9 @@ class CRDTManager {
  public:
   explicit CRDTManager(int site_id);
 
-  struct CRDTAction GenerateCRDTActionForLocalInsert(std::string &text, int index, CRDTOperation operation);
+  struct CRDTAction GenerateCRDTActionForLocalInsert(std::string &text, int index);
 
-  struct CRDTAction GenerateCRDTActionForLocalDelete(int index, CRDTOperation operation);
+  struct CRDTAction GenerateCRDTActionForLocalDelete(int index);
 
   std::pair<std::string, int> GenerateStringInsertInfoFromRemoteInsert(struct CRDTAction &remote_action);
 

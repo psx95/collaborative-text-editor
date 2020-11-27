@@ -30,10 +30,14 @@ void ApplicationController::OnLocalDelete(int index) {
   std::cout << "Editor Callback: local delete from position " << index << std::endl;
 }
 
-void ApplicationController::OnRemoteInsertReceive(sf::Packet &packet) {
-  std::cout << "Networking Callback: remote insert packet received of size " << packet.getDataSize() << std::endl;
+void ApplicationController::OnRemoteOperationReceive(struct CRDTAction &crdt_action) {
+  // check action and handle insert or delete
 }
 
-void ApplicationController::OnRemoteDeleteReceive(sf::Packet &packet) {
-  std::cout << "Networking Callback: remote delete packet received of size " << packet.getDataSize() << std::endl;
+void ApplicationController::OnRemoteInsertReceive(struct CRDTAction &crdt_action) {
+  std::cout << "Networking Callback: remote insert packet received from client " << crdt_action.site_id << std::endl;
+}
+
+void ApplicationController::OnRemoteDeleteReceive(struct CRDTAction &crdt_action) {
+  std::cout << "Networking Callback: remote delete packet received from client " << crdt_action.site_id << std::endl;
 }
