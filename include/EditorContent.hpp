@@ -7,6 +7,7 @@
 
 #include "Cursor.hpp"
 #include "TextFileContent.hpp"
+#include "EditorCallbacks.hpp"
 
 /*!
  * @brief This class represents the current content that is visible on the GUI window.
@@ -16,6 +17,7 @@ class EditorContent {
  private:
   Cursor cursor; // The cursor that is visible on the screen.
   TextFileContent &text_document; // Object to encapsulate all the text manipulation
+  EditorCallbacks *callbacks{};// Callbacks for local insert/delete operations.
 
  public:
   /*!
@@ -96,6 +98,14 @@ class EditorContent {
    * @param line_number The line number of the new cursor position.
    */
   void SetCursorAtPosition(int column_number, int line_number);
+
+  /*!
+   * @brief This method is used to assign value to the EditorCallbacks for this class.
+   * @details This is provided as a setter so as to allow setting the value for callbacks after the class is initialized.
+   * However, this method must be called before the EditorWindow is actually launched (rendered for the user).
+   * @param editor_callback A pointer to the EditorCallbacks objects.
+   */
+  void SetEditorCallbacks(EditorCallbacks *editor_callback);
 
   std::string GetStringContent();
   std::vector<int> &GetLinePositions();

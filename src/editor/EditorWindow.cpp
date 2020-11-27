@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <CustomMessageException.hpp>
 #include "EditorWindow.hpp"
 EditorWindow::EditorWindow(sf::Color background_color) {
   InitializeEditorWindow();
@@ -53,6 +54,13 @@ void EditorWindow::CloseWindow() {
   if (editor_window != nullptr && editor_window->isOpen()) {
     editor_window->close();
   }
+}
+
+void EditorWindow::SetEditorCallbacks(EditorCallbacks *callbacks) {
+  if (!callbacks) {
+    throw CustomMessageException("EditorCallbacks cannot be set as null!");
+  }
+  editor_content->SetEditorCallbacks(callbacks);
 }
 
 EditorWindow::~EditorWindow() {

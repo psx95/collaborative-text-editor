@@ -1,10 +1,12 @@
 #include <iostream>
 #include <EditorWindow.hpp>
+#include <ApplicationController.hpp>
 
 int main() {
-  std::cout << "Hello, World!" << std::endl;
+  std::cout << "Starting Application" << std::endl;
   EditorWindow window(sf::Color(47, 50, 47));
-  window.StartEventLoop();
-  window.CloseWindow();
+  ApplicationController controller(window);
+  controller.Go();
+  controller.Shutdown();
   return 0;
 }

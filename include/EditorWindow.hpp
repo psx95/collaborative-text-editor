@@ -7,6 +7,7 @@
 #include <SFML/Graphics.hpp>
 #include "EditorView.hpp"
 #include "InputHandler.hpp"
+#include "EditorCallbacks.hpp"
 
 /*!
  * @brief This class maintains the event loop and is responsible for managing the visual window that is present on
@@ -43,6 +44,13 @@ class EditorWindow {
    * @details This method should be used to indicate the user wants to exit the application.
    */
   void CloseWindow();
+
+
+  /*!
+   * @brief This method is used to set EditorCallbacks for EditorContent.
+   * @param callbacks A pointer to the EditorCallbacks objects.
+   */
+  void SetEditorCallbacks(EditorCallbacks *callbacks);
 
   /*!
    * @brief Custom destructor for the EditorWindow. Should be used to reclaim any manually allocated memory.
