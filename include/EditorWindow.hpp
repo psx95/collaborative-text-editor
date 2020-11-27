@@ -48,9 +48,9 @@ class EditorWindow {
 
   /*!
    * @brief This method is used to set EditorCallbacks for EditorContent.
-   * @param callbacks A pointer to the EditorCallbacks objects.
+   * @param editor_callbacks A pointer to the EditorCallbacks objects.
    */
-  void SetEditorCallbacks(EditorCallbacks *callbacks);
+  void SetEditorCallbacks(EditorCallbacks *editor_callbacks);
 
   /*!
    * @brief Custom destructor for the EditorWindow. Should be used to reclaim any manually allocated memory.

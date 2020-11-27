@@ -56,11 +56,11 @@ void EditorWindow::CloseWindow() {
   }
 }
 
-void EditorWindow::SetEditorCallbacks(EditorCallbacks *callbacks) {
-  if (!callbacks) {
+void EditorWindow::SetEditorCallbacks(EditorCallbacks *editor_callbacks) {
+  if (!editor_callbacks) {
     throw CustomMessageException("EditorCallbacks cannot be set as null!");
   }
-  editor_content->SetEditorCallbacks(callbacks);
+  editor_content->SetEditorCallbacks(editor_callbacks);
 }
 
 EditorWindow::~EditorWindow() {
