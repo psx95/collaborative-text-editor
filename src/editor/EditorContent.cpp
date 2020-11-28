@@ -15,10 +15,11 @@ Cursor EditorContent::GetCursor() {
 void EditorContent::InsertStringAtCursor(sf::String txt) {
   int line_number = this->cursor.GetLineNumber();
   int column_number = this->cursor.GetColumnNumber();
-  this->text_document.AddTextAtPosition(txt, line_number, column_number);
+  int inserted_position = this->text_document.AddTextAtPosition(txt, line_number, column_number);
   for (int i = 0; i < txt.getSize(); i++) {
     this->MoveCursorRight();
   }
+  callbacks->OnLocalInsert(txt, inserted_position);
 }
 
 void EditorContent::DeleteCharacterFromCursorPosition(int number_of_characters) {
@@ -27,10 +28,11 @@ void EditorContent::DeleteCharacterFromCursorPosition(int number_of_characters) 
   if (line_number == 0 && column_number == 0) {
     return;
   }
-  this->text_document.RemoveTextFromPosition(number_of_characters, line_number, column_number);
+  int deleted_position = this->text_document.RemoveTextFromPosition(number_of_characters, line_number, column_number);
   for (int i = 0; i < number_of_characters; i++) {
     this->MoveCursorLeft();
   }
+  callbacks->OnLocalDelete(deleted_position);
 }
 
 std::string EditorContent::GetStringContent() {
@@ -107,4 +109,8 @@ void EditorContent::SetCursorAtPosition(int column_number, int line_number) {
 
 int EditorContent::GetNumberOfCharactersAtLine(int line_number) const {
   return this->text_document.GetNumberOfCharactersInLine(line_number);
+}
+
+void EditorContent::SetEditorCallbacks(EditorCallbacks *editor_callback) {
+  this->callbacks = editor_callback;
 }

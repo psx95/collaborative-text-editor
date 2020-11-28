@@ -53,8 +53,9 @@ class TextFileContent {
    * @param text The text that needs to be inserted at the given position.
    * @param line_number The line number at which the text needs to be inserted.
    * @param column_number The column number at which the text needs to be inserted.
+   * @return the actual linear position (index) in the string content at which the text was added.
    */
-  void AddTextAtPosition(sf::String &text, int line_number, int column_number);
+  int AddTextAtPosition(sf::String &text, int line_number, int column_number);
 
   /*!
    * @brief This method is responsible for removing a certain amount of text from a given position.
@@ -63,8 +64,9 @@ class TextFileContent {
    * @param amount The number of characters in the text that need to be deleted.
    * @param line_number The line number at which the text needs to be inserted.
    * @param column_number The column number at which the text needs to be inserted.
+   * @return the actual linear position (index) in the string content from which the text was removed.
    */
-  void RemoveTextFromPosition(int amount, int line_number, int column_number);
+  int RemoveTextFromPosition(int amount, int line_number, int column_number);
 };
 
 #endif //COLLABORATIVE_TEXT_EDITOR_SRC_EDITOR_TEXTFILE_HPP_

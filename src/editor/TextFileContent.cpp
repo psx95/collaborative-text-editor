@@ -26,11 +26,12 @@ sf::String TextFileContent::GetLine(int line_number) {
   return this->string_content.substring(required_line_start, length_of_required_line);
 }
 
-void TextFileContent::AddTextAtPosition(sf::String &text, int line_number, int column_number) {
+int TextFileContent::AddTextAtPosition(sf::String &text, int line_number, int column_number) {
   int text_insert_position = GetStringPositionFromCursorPosition(line_number, column_number);
   this->string_content.insert(text_insert_position, text);
 
   int number_of_lines = this->line_positions.size();
+  // if there are more lines ahead of the current line position
   for (int i = line_number + 1; i < number_of_lines; i++) {
     this->line_positions[i] += text.getSize(); // update the new positions of '\n'
   }
@@ -45,9 +46,10 @@ void TextFileContent::AddTextAtPosition(sf::String &text, int line_number, int c
       this->line_positions.insert(sorted_position, new_line_start_position);
     }
   }
+  return text_insert_position;
 }
 
-void TextFileContent::RemoveTextFromPosition(int amount, int line_number, int column_number) {
+int TextFileContent::RemoveTextFromPosition(int amount, int line_number, int column_number) {
   int cursor_current_position = GetStringPositionFromCursorPosition(line_number, column_number);
   int text_delete_start_position = std::max(0, cursor_current_position - amount);
   this->string_content.erase(text_delete_start_position, amount);
@@ -59,6 +61,7 @@ void TextFileContent::RemoveTextFromPosition(int amount, int line_number, int co
       this->line_positions.push_back(i + 1); // line starts after \n
     }
   }
+  return text_delete_start_position;
 }
 
 int TextFileContent::GetStringPositionFromCursorPosition(int line_number, int column_number) {
