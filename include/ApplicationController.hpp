@@ -9,12 +9,14 @@
 #include "CRDTManager.hpp"
 #include "NetworkingCallbacks.hpp"
 #include "UDPClient.hpp"
+#include "VersionVector.hpp"
 
 class ApplicationController : public EditorCallbacks, public NetworkingCallbacks {
  private:
   EditorWindow &editor_window;
   CRDTManager &crdt_manager;
   UDPClient &udp_client;
+  VersionVector &version_vector;
 
   void Init();
 
@@ -23,7 +25,7 @@ class ApplicationController : public EditorCallbacks, public NetworkingCallbacks
   void OnRemoteDeleteReceive(struct CRDTAction &crdt_action);
 
  public:
-  explicit ApplicationController(EditorWindow &editor, CRDTManager &crdt, UDPClient &client);
+  explicit ApplicationController(EditorWindow &editor, CRDTManager &crdt, UDPClient &client, VersionVector &vector);
 
   void Go();
 
