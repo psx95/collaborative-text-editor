@@ -38,9 +38,9 @@ void ApplicationController::OnRemoteOperationReceive(struct CRDTAction &crdt_act
 }
 
 void ApplicationController::OnRemoteInsertReceive(struct CRDTAction &crdt_action) {
-  std::cout << "Networking Callback: remote insert packet received from client " << crdt_action.site_id << std::endl;
+  std::cout << "Networking Callback: remote insert packet received from client " << crdt_action.SiteId() << std::endl;
 }
 
 void ApplicationController::OnRemoteDeleteReceive(struct CRDTAction &crdt_action) {
-  std::cout << "Networking Callback: remote delete packet received from client " << crdt_action.site_id << std::endl;
+  std::cout << "Networking Callback: remote delete packet received from client " << crdt_action.SiteId() << std::endl;
 }
