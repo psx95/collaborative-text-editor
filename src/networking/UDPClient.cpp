@@ -18,26 +18,25 @@ UDPClient::UDPClient(unsigned short port, std::vector<struct PeerAddress> &peer_
 
 void UDPClient::Init() {
   // Bind socket to port
- // client_socket.bind(this->client_port);
+ client_socket.bind(this->client_port);
   // Initialize socket
   std::thread ListeningThread(&UDPClient::StartListeningThread, this);
+  //ListeningThread.detach(); - need to try this
   thread_vector.push_back(std::move(ListeningThread));
   std::cout<<"Thread ended "<<std::endl;
 }
 
 void UDPClient::StartListeningThread() {
-  std::cout<<"Thread running "<<std::endl;
-  // client_listening.store(true, std::memory_order_relaxed);
-while(true){
-}
-//  while(true){
-//    char buffer[1024];
-//    std::size_t received = 0;
-//    sf::IpAddress sender;
-//    unsigned short port;
-//    socket.receive(buffer, sizeof(buffer), received, sender, port);
-//    std::cout << sender.ToString() << " said: " << buffer << std::endl;
-//  }
+  std::cout<<"Listening "<<std::endl;
+  client_listening.store(true, std::memory_order_relaxed);
+  while(client_listening.load(std::memory_order_relaxed)){
+    char buffer[1024];
+    std::size_t received = 0;
+    sf::IpAddress sender;
+    unsigned short port;
+    client_socket.receive(buffer, sizeof(buffer), received, sender, port);
+    std::cout << sender.toString() << " said: " << buffer << std::endl;
+  }
 }
 
 void UDPClient::BroadcastActionToAllConnectedPeers(CRDTAction &crdt_action) {

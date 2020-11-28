@@ -32,7 +32,7 @@ int main(int argc, char** argv) {
 
   std::vector<struct PeerAddress> dummy_peers; // take from console
   UDPClient udp_client(atoi(argv[1]), peers);
-  ApplicationController controller(window, crdt_manager, udp_client);
+  ApplicationController controller(window, crdt_manager, udp_client, version_vector);
   controller.Go();
   controller.Shutdown();
 
