@@ -4,8 +4,11 @@
 
 #include <iostream>
 #include "ApplicationController.hpp"
-ApplicationController::ApplicationController(EditorWindow &editor, CRDTManager &crdt, UDPClient &client)
-    : editor_window(editor), crdt_manager(crdt), udp_client(client) {
+ApplicationController::ApplicationController(EditorWindow &editor,
+                                             CRDTManager &crdt,
+                                             UDPClient &client,
+                                             VersionVector &vector)
+    : editor_window(editor), crdt_manager(crdt), udp_client(client), version_vector(vector) {
   Init();
 }
 
