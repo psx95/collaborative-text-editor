@@ -12,6 +12,7 @@
 #include <atomic>
 #include "CommonStructs.hpp"
 #include "NetworkingCallbacks.hpp"
+#include <thread>
 
 class UDPClient {
  private:
@@ -20,7 +21,7 @@ class UDPClient {
   std::atomic<bool> client_listening{}; // a boolean to indicate if the current client is listening for incoming packets
   NetworkingCallbacks *client_callbacks{}; // client callbacks used by controller to define code that must run on events
   sf::UdpSocket client_socket; // the udp socket which the client app can use for networking
-
+  std::vector<std::thread> thread_vector;
   void Init(); // any one time initialization steps
   void StartListeningThread(); // helper method to start the listening functionality in a background thread
   void HandleIncomingPacket(sf::Packet &packet); // handle incoming packet with CRDT Action

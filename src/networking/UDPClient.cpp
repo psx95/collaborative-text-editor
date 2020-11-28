@@ -4,22 +4,40 @@
 
 #include <CustomMessageException.hpp>
 #include "UDPClient.hpp"
+#include<iostream>
+
 
 UDPClient::UDPClient(unsigned short port, std::vector<struct PeerAddress> &peer_addresses) {
   this->client_port = port;
   this->peer_addresses = peer_addresses;
+  for(PeerAddress peer: peer_addresses){
+    std::cout<<peer.ip_address<<"\t"<<peer.port<<std::endl;
+  }
   Init();
 }
 
 void UDPClient::Init() {
   // Bind socket to port
+ // client_socket.bind(this->client_port);
   // Initialize socket
-  StartListeningThread();
+  std::thread ListeningThread(&UDPClient::StartListeningThread, this);
+  thread_vector.push_back(std::move(ListeningThread));
+  std::cout<<"Thread ended "<<std::endl;
 }
 
 void UDPClient::StartListeningThread() {
-  client_listening.store(true, std::memory_order_relaxed);
-  // call handle packet from here
+  std::cout<<"Thread running "<<std::endl;
+  // client_listening.store(true, std::memory_order_relaxed);
+while(true){
+}
+//  while(true){
+//    char buffer[1024];
+//    std::size_t received = 0;
+//    sf::IpAddress sender;
+//    unsigned short port;
+//    socket.receive(buffer, sizeof(buffer), received, sender, port);
+//    std::cout << sender.ToString() << " said: " << buffer << std::endl;
+//  }
 }
 
 void UDPClient::BroadcastActionToAllConnectedPeers(CRDTAction &crdt_action) {

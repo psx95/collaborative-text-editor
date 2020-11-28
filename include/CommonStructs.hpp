@@ -57,7 +57,7 @@ struct CRDTAction {
 
 struct PeerAddress {
   sf::IpAddress ip_address; // ensures that the address is complaint & valid, not just any random string
-  unsigned short port{}; // port at which the connected client runs.
+  unsigned short port; // port at which the connected client runs.
 };
 
 #endif //COLLABORATIVE_TEXT_EDITOR_INCLUDE_COMMONSTRUCTS_HPP_
