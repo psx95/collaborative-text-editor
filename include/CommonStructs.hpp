@@ -15,7 +15,7 @@ enum CRDTOperation {
 
 struct CRDTAction {
   CRDTOperation operation;
-  int site_id; // unique id of the client
+  std::string site_id; // unique id of the client
   int counter; // site counter managed by version vector
   std::string text; // value of the string (current support for single chars) to be inserted.
   int positions[]; // fractional position calculated by CRDT.

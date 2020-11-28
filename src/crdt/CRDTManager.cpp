@@ -5,9 +5,7 @@
 #include <CustomMessageException.hpp>
 #include "CRDTManager.hpp"
 
-CRDTManager::CRDTManager(int site_id) {
-  this->site_id = site_id;
-}
+CRDTManager::CRDTManager(std::string &site_id) : site_id(site_id) {}
 
 struct CRDTAction CRDTManager::GenerateCRDTActionForLocalInsert(std::string &text, int index) {
   throw CustomMessageException("Not Implemented yet");

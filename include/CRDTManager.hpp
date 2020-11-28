@@ -8,10 +8,10 @@
 #include "CommonStructs.hpp"
 class CRDTManager {
  private:
-  int site_id; // should be unique across all clients, could use UUID or IP-port combo
+  std::string &site_id; // should be unique across all clients, could use UUID or IP-port combo
 
  public:
-  explicit CRDTManager(int site_id);
+  explicit CRDTManager(std::string &site_id);
 
   struct CRDTAction GenerateCRDTActionForLocalInsert(std::string &text, int index);
 
