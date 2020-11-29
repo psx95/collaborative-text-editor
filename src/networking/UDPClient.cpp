@@ -23,7 +23,6 @@ void UDPClient::Init() {
   std::thread ListeningThread(&UDPClient::StartListeningThread, this);
   //ListeningThread.detach(); - need to try this
   thread_vector.push_back(std::move(ListeningThread));
-  std::cout<<"Thread ended "<<std::endl;
 }
 
 CRDTOperation operation;
@@ -31,50 +30,46 @@ std::string site_id; // unique id of the client
 int counter; // site counter managed by version vector
 std::string text; // value of the string (current support for single chars) to be inserted.
 
-sf::Packet& operator <<(sf::Packet& packet, const CRDTAction& crdt_action)
-{
-  return packet << crdt_action.site_id << crdt_action.counter << crdt_action.text;
-}
-
-sf::Packet& operator >>(sf::Packet& packet, CRDTAction& crdt_action)
-{
-  return packet  >> crdt_action.site_id >> crdt_action.counter >> crdt_action.text;
-}
-
-
 void UDPClient::StartListeningThread() {
-  std::cout<<"Listening "<<std::endl;
   client_listening.store(true, std::memory_order_relaxed);
-  CRDTAction crdt_action;
   while(client_listening.load(std::memory_order_relaxed)){
-    std::cout<<"Listening True"<<std::endl;
-
+    std::cout<<"Listening "<<std::endl;
     sf::Packet packet;
     sf::IpAddress sender;
     unsigned short port;
-    //client_socket.receive(&packet, sizeof(buffer), received, sender, port);
     client_socket.receive(packet, sender,port);
-    packet>>crdt_action;
-//    if (packet >> crdt_action.site_id >> crdt_action.counter >> crdt_action.text)
-//    {
-//      std::cout<<"Data extracted successfully "<<std::endl;
-//    }
-//    else{
-//      std::cout<<"Failed! - Data extraction"<<std::endl;
-//    }
-    std::cout<<"Output "<<"crdt_action.site_id "<< crdt_action.site_id<<"\t"<<"crdt_action.counter "<<crdt_action.counter<<"crdt_action.text "<<crdt_action.text<<std::endl;
+    int operation;
+    std::string site_id; // unique id of the client
+    int counter; // site counter managed by version vector
+    std::string text; // value of the string (current support for single chars) to be inserted.
+    int positions_size;
+    std::vector<int> positions; // fractional position calculated by CRDT.
+
+    packet >>operation >> site_id >> counter >> text >>positions_size;
+
+    for(int i=0;i<positions_size;i++){
+      int position;
+      packet>>position;
+      positions.push_back(position);
+    }
+    CRDTAction crdt_action((CRDTOperation) operation, site_id, counter, text, positions);
+    crdt_action.Print();
   }
 }
 
 
 
 void UDPClient::BroadcastActionToAllConnectedPeers(CRDTAction &crdt_action) {
-  sf::Packet packet;
   //packet << crdt_action.site_id << crdt_action.counter << crdt_action.text;
-  packet<<crdt_action;
-
   for(PeerAddress peer_address: this->peer_addresses){
-    std::cout<<"Sending it to IP address "<<peer_address.ip_address<<"port "<<peer_address.port<<std::endl;
+    sf::Packet packet;
+    packet << crdt_action.Operation() << crdt_action.SiteId() << crdt_action.Counter() << crdt_action.Text() <<
+    (int)crdt_action.Positions().size();
+
+    for(int position:crdt_action.Positions()){
+      packet<<position;
+    }
+    std::cout<<"Broadcast - "<<peer_address.ip_address<<"\t"<<"port"<<peer_address.port<<std::endl;
     client_socket.send(packet,peer_address.ip_address,peer_address.port);
   }
 

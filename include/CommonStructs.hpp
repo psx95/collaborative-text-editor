@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include <SFML/Network/IpAddress.hpp>
+#include<iostream>
 
 enum CRDTOperation {
   INSERT = 0,
@@ -45,6 +46,18 @@ struct CRDTAction {
 
   std::vector<int> Positions() const {
     return positions;
+  }
+
+  void Print() const{
+    std::cout<<"Operation "<<operation<<std::endl;
+    std::cout<<"site_id "<<site_id<<std::endl;
+    std::cout<<"counter "<<counter<<std::endl;
+    std::cout<<"text "<<text<<std::endl;
+    std::cout<<"positions ";
+    for(int position:positions){
+      std::cout<<position<<"\t";
+    }
+    std::cout<<std::endl;
   }
 
  private:
