@@ -26,20 +26,56 @@ void UDPClient::Init() {
   std::cout<<"Thread ended "<<std::endl;
 }
 
+CRDTOperation operation;
+std::string site_id; // unique id of the client
+int counter; // site counter managed by version vector
+std::string text; // value of the string (current support for single chars) to be inserted.
+
+//sf::Packet& operator <<(sf::Packet& packet, const CRDTAction& crdt_action)
+//{
+//  return packet << crdt_action.site_id << crdt_action.counter << crdt_action.text;
+//}
+//
+//sf::Packet& operator >>(sf::Packet& packet, CRDTAction& crdt_action)
+//{
+//  return packet  >> crdt_action.site_id >> crdt_action.counter >> crdt_action.text;
+//}
+
+
 void UDPClient::StartListeningThread() {
   std::cout<<"Listening "<<std::endl;
   client_listening.store(true, std::memory_order_relaxed);
+  CRDTAction crdt_action;
   while(client_listening.load(std::memory_order_relaxed)){
-    char buffer[1024];
-    std::size_t received = 0;
+    std::cout<<"Listening True"<<std::endl;
+
+    sf::Packet packet;
     sf::IpAddress sender;
     unsigned short port;
-    client_socket.receive(buffer, sizeof(buffer), received, sender, port);
-    std::cout << sender.toString() << " said: " << buffer << std::endl;
+    //client_socket.receive(&packet, sizeof(buffer), received, sender, port);
+    client_socket.receive(packet, sender,port);
+    //packet>>crdt_action;
+    if (packet >> crdt_action.site_id >> crdt_action.counter >> crdt_action.text)
+    {
+      std::cout<<"Data extracted successfully "<<std::endl;
+    }
+    else{
+      std::cout<<"Failed! - Data extraction"<<std::endl;
+    }
+    std::cout<<"Output "<<"crdt_action.site_id "<< crdt_action.site_id<<"\t"<<"crdt_action.counter "<<crdt_action.counter<<"crdt_action.text "<<crdt_action.text<<std::endl;
   }
 }
 
+
+
 void UDPClient::BroadcastActionToAllConnectedPeers(CRDTAction &crdt_action) {
+  sf::Packet packet;
+  packet << crdt_action.site_id << crdt_action.counter << crdt_action.text;
+
+  for(PeerAddress peer_address: this->peer_addresses){
+    std::cout<<"Sending it to IP address "<<peer_address.ip_address<<"port "<<peer_address.port<<std::endl;
+    client_socket.send(packet,peer_address.ip_address,peer_address.port);
+  }
 
 }
 

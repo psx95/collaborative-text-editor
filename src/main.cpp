@@ -13,6 +13,8 @@ std::string generateUniqueId();
 int main(int argc, char** argv) {
   std::cout << "Starting Application" << std::endl;
   std::cout<<argc<<std::endl;
+  std::cout<<"New compilaion"<<std::endl;
+
   if(argc < 3 || argc!=(3 + 2 * atoi(argv[2]))){
   std::cout<<"Error: Not enough or invalid arguments, please enter in this format ./editor <client_port> <no_of_peers>"
              " [<peer_ip> <peer_port> ...]"<<std::endl;
@@ -32,6 +34,8 @@ int main(int argc, char** argv) {
 
   std::vector<struct PeerAddress> dummy_peers; // take from console
   UDPClient udp_client(atoi(argv[1]), peers);
+  CRDTAction crdt_action = {"1",2,"Hi there"};
+  udp_client.BroadcastActionToAllConnectedPeers(crdt_action);
   ApplicationController controller(window, crdt_manager, udp_client, version_vector);
   controller.Go();
   controller.Shutdown();

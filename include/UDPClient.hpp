@@ -54,6 +54,12 @@ class UDPClient {
    */
   void ShutdownClient(); // safe disconnect + stop listening thread
 
+
+//  sf::Packet& operator <<(sf::Packet& packet, const CRDTAction& action);
+//
+//  sf::Packet& operator >>(sf::Packet& packet, CRDTAction& character);
+
+
 };
 
 #endif //COLLABORATIVE_TEXT_EDITOR_SRC_NETWORKING_UDPCLIENT_HPP_
