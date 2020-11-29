@@ -31,15 +31,15 @@ std::string site_id; // unique id of the client
 int counter; // site counter managed by version vector
 std::string text; // value of the string (current support for single chars) to be inserted.
 
-//sf::Packet& operator <<(sf::Packet& packet, const CRDTAction& crdt_action)
-//{
-//  return packet << crdt_action.site_id << crdt_action.counter << crdt_action.text;
-//}
-//
-//sf::Packet& operator >>(sf::Packet& packet, CRDTAction& crdt_action)
-//{
-//  return packet  >> crdt_action.site_id >> crdt_action.counter >> crdt_action.text;
-//}
+sf::Packet& operator <<(sf::Packet& packet, const CRDTAction& crdt_action)
+{
+  return packet << crdt_action.site_id << crdt_action.counter << crdt_action.text;
+}
+
+sf::Packet& operator >>(sf::Packet& packet, CRDTAction& crdt_action)
+{
+  return packet  >> crdt_action.site_id >> crdt_action.counter >> crdt_action.text;
+}
 
 
 void UDPClient::StartListeningThread() {
@@ -54,14 +54,14 @@ void UDPClient::StartListeningThread() {
     unsigned short port;
     //client_socket.receive(&packet, sizeof(buffer), received, sender, port);
     client_socket.receive(packet, sender,port);
-    //packet>>crdt_action;
-    if (packet >> crdt_action.site_id >> crdt_action.counter >> crdt_action.text)
-    {
-      std::cout<<"Data extracted successfully "<<std::endl;
-    }
-    else{
-      std::cout<<"Failed! - Data extraction"<<std::endl;
-    }
+    packet>>crdt_action;
+//    if (packet >> crdt_action.site_id >> crdt_action.counter >> crdt_action.text)
+//    {
+//      std::cout<<"Data extracted successfully "<<std::endl;
+//    }
+//    else{
+//      std::cout<<"Failed! - Data extraction"<<std::endl;
+//    }
     std::cout<<"Output "<<"crdt_action.site_id "<< crdt_action.site_id<<"\t"<<"crdt_action.counter "<<crdt_action.counter<<"crdt_action.text "<<crdt_action.text<<std::endl;
   }
 }
@@ -70,7 +70,8 @@ void UDPClient::StartListeningThread() {
 
 void UDPClient::BroadcastActionToAllConnectedPeers(CRDTAction &crdt_action) {
   sf::Packet packet;
-  packet << crdt_action.site_id << crdt_action.counter << crdt_action.text;
+  //packet << crdt_action.site_id << crdt_action.counter << crdt_action.text;
+  packet<<crdt_action;
 
   for(PeerAddress peer_address: this->peer_addresses){
     std::cout<<"Sending it to IP address "<<peer_address.ip_address<<"port "<<peer_address.port<<std::endl;
