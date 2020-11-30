@@ -44,7 +44,7 @@ int main(int argc, char** argv) {
   ApplicationController controller(window, crdt_manager, udp_client, version_vector);
   controller.Go();
   controller.Shutdown();
-
+  udp_client.ShutdownClient();
   return 0;
 }
 

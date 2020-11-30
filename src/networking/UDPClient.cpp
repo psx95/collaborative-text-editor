@@ -19,6 +19,7 @@ UDPClient::UDPClient(unsigned short port, std::vector<struct PeerAddress> &peer_
 void UDPClient::Init() {
   // Bind socket to port
  client_socket.bind(this->client_port);
+ client_socket.setBlocking(false);
   // Initialize socket
   std::thread ListeningThread(&UDPClient::StartListeningThread, this);
   //ListeningThread.detach(); - need to try this
@@ -31,13 +32,17 @@ int counter; // site counter managed by version vector
 std::string text; // value of the string (current support for single chars) to be inserted.
 
 void UDPClient::StartListeningThread() {
+  std::cout<<"Listening "<<std::endl;
   client_listening.store(true, std::memory_order_relaxed);
   while(client_listening.load(std::memory_order_relaxed)){
-    std::cout<<"Listening "<<std::endl;
     sf::Packet packet;
     sf::IpAddress sender;
     unsigned short port;
-    client_socket.receive(packet, sender,port);
+    sf::Socket::Status status;
+    status = client_socket.receive(packet, sender,port);
+
+    if(status == sf::Socket::Status::Done)
+    {
     int operation;
     std::string site_id; // unique id of the client
     int counter; // site counter managed by version vector
@@ -54,13 +59,15 @@ void UDPClient::StartListeningThread() {
     }
     CRDTAction crdt_action((CRDTOperation) operation, site_id, counter, text, positions);
     crdt_action.Print();
+    client_callbacks->OnRemoteOperationReceive(crdt_action);
+    }
   }
+  std::cout<<"Stopped Listening Thread"<<std::endl;
 }
 
 
 
 void UDPClient::BroadcastActionToAllConnectedPeers(CRDTAction &crdt_action) {
-  //packet << crdt_action.site_id << crdt_action.counter << crdt_action.text;
   for(PeerAddress peer_address: this->peer_addresses){
     sf::Packet packet;
     packet << crdt_action.Operation() << crdt_action.SiteId() << crdt_action.Counter() << crdt_action.Text() <<
@@ -80,7 +87,10 @@ void UDPClient::HandleIncomingPacket(sf::Packet &packet) {
 }
 
 void UDPClient::ShutdownClient() {
-
+  client_listening.store(false, std::memory_order_relaxed);
+  for (auto& th : thread_vector) {
+   th.join();
+  }
 }
 
 void UDPClient::SetClientCallbacks(NetworkingCallbacks *callbacks) {
