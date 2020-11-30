@@ -8,6 +8,7 @@
 #include "CommonStructs.hpp"
 
 class VersionVector {
+ public:
   std::vector<CRDTAction> ProcessRemoteAction(CRDTAction &action);
 
   void IncrementSiteCounter();

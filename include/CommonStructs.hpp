@@ -9,9 +9,17 @@
 #include <vector>
 #include <SFML/Network/IpAddress.hpp>
 
+#include "CRDTCharacter.hpp"
+
 enum CRDTOperation {
   INSERT = 0,
   DELETE = 1
+};
+
+enum CRDTAllocationStrategy {
+  RANDOM = 0,
+  BOUNDARY_PLUS = 1,
+  BOUNDARY_MINUS = 2
 };
 
 /*!
@@ -25,6 +33,13 @@ struct CRDTAction {
  public:
   CRDTAction(CRDTOperation operation, std::string &site_id, int counter, std::string &text, std::vector<int> &positions)
       : operation(operation), site_id(site_id), counter(counter), text(text), positions(positions) {
+  }
+
+  CRDTAction(CRDTOperation operation, CRDTCharacter &character) : operation(operation) {
+    site_id = character.GetSiteId();
+    counter = character.GetCounter();
+    text = character.GetValue();
+    positions = character.GetPositions();
   }
 
   CRDTOperation Operation() const {
