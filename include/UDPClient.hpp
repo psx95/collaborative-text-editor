@@ -25,6 +25,7 @@ class UDPClient {
   void Init(); // any one time initialization steps
   void StartListeningThread(); // helper method to start the listening functionality in a background thread
   void HandleIncomingPacket(sf::Packet &packet); // handle incoming packet with CRDT Action
+  void HandleOutgoingPacket(sf::Packet packet, PeerAddress peer_address); // handle incoming packet with CRDT Action
 
  public:
   /*!

@@ -21,10 +21,8 @@ void UDPClient::Init() {
   client_socket.setBlocking(false);
   // Initialize socket
   std::thread ListeningThread(&UDPClient::StartListeningThread, this);
-  //ListeningThread.detach(); - need to try this
   thread_vector.push_back(std::move(ListeningThread));
 }
-
 
 void UDPClient::StartListeningThread() {
   std::cout << "Listening " << std::endl;
@@ -44,17 +42,25 @@ void UDPClient::StartListeningThread() {
   std::cout << "Listening terminated" << std::endl;
 }
 
-void UDPClient::BroadcastActionToAllConnectedPeers(CRDTAction &crdt_action) {
-  for (PeerAddress peer_address: this->peer_addresses) {
-    sf::Packet packet;
-    packet << crdt_action.Operation() << crdt_action.SiteId() << crdt_action.Counter() << crdt_action.Text() <<
-           (int) crdt_action.Positions().size();
+void UDPClient::HandleOutgoingPacket(sf::Packet packet, PeerAddress peer_address) {
+  sf::Socket::Status status = client_socket.send(packet, peer_address.ip_address, peer_address.port);
+  std::cout << "Send status " << status << std::endl;
+}
 
-    for (int position:crdt_action.Positions()) {
-      packet << position;
-    }
+void UDPClient::BroadcastActionToAllConnectedPeers(CRDTAction &crdt_action) {
+  sf::Packet packet;
+  packet << crdt_action.Operation() << crdt_action.SiteId() << crdt_action.Counter() << crdt_action.Text() <<
+         (int) crdt_action.Positions().size();
+
+  for (long position:crdt_action.Positions()) {
+    packet << (sf::Int64)position;
+  }
+
+  for (PeerAddress peer_address: this->peer_addresses) {
     std::cout << "Broadcast - " << peer_address.ip_address << "\t" << "port" << peer_address.port << std::endl;
-    client_socket.send(packet, peer_address.ip_address, peer_address.port);
+
+    std::thread HandleOutgoingPacketThread(&UDPClient::HandleOutgoingPacket, this, packet, peer_address);
+    thread_vector.push_back(std::move(HandleOutgoingPacketThread));
   }
 }
 
@@ -64,14 +70,14 @@ void UDPClient::HandleIncomingPacket(sf::Packet &packet) {
   int counter; // site counter managed by version vector
   std::string text; // value of the string (current support for single chars) to be inserted.
   int positions_size;
-  std::vector<int> positions; // fractional position calculated by CRDT.
+  std::vector<long> positions; // fractional position calculated by CRDT.
 
   packet >> operation >> site_id >> counter >> text >> positions_size;
 
   for (int i = 0; i < positions_size; i++) {
-    int position;
+    sf::Int64 position;
     packet >> position;
-    positions.push_back(position);
+    positions.push_back((long)position);
   }
   CRDTAction crdt_action((CRDTOperation) operation, site_id, counter, text, positions);
   crdt_action.Print();

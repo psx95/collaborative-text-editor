@@ -34,7 +34,7 @@ int main(int argc, char** argv) {
   UDPClient udp_client(atoi(argv[1]), peers);
 
 
-  std::vector<int> positions(5, 1);
+  std::vector<long> positions(5, 1);
   std::string site_id = "127.0.0.1:2002";
   int counter = 2;
   std::string text = "w";
