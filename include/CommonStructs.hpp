@@ -16,9 +16,27 @@ enum CRDTOperation {
   DELETE = 1
 };
 
+/*!
+ * @brief This enum holds the allocation strategies that can be used to generate a new value to add to the positions
+ * array for a CRDTCharacter.
+ */
 enum CRDTAllocationStrategy {
+
+  /*!
+   * @brief Randomly choose between BOUNDARY_PLUS and BOUNDARY_MINUS.
+   */
   RANDOM = 0,
+
+  /*!
+   * @brief This strategy will generate a random number between a range that is closer to the beginning of the range.
+   * @details This strategy is more suitable for edits at the end of the document.
+   */
   BOUNDARY_PLUS = 1,
+
+  /*!
+   * @brief This strategy will generate a random number between a range that is closer to the end of the range.
+   * @details This strategy is more suitable for edits made at the beginning of the document.
+   */
   BOUNDARY_MINUS = 2
 };
 

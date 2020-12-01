@@ -53,7 +53,7 @@ std::vector<long> CRDTManager::GeneratePositionBetween(std::vector<long> &before
                                                        std::vector<long> &after,
                                                        std::vector<long> &generated_position,
                                                        int depth) {
-  int base = (int) std::pow(base_multiple, depth) * this->starting_base;
+  int base = (int) std::pow(base_exp, depth) * this->starting_base;
   CRDTAllocationStrategy strategy_at_depth = GetAllocationStrategyForDepth(depth);
   // if no positions, then probably its a new level and in a new level, the available identifiers can go from 0 to
   // base size computed for that level (base size is exponentially increased at each level)
