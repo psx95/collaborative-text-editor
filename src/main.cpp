@@ -27,9 +27,10 @@ int main(int argc, char **argv) {
 
   std::string unique_id = generateUniqueId();
   CRDTManager crdt_manager(unique_id);
-  VersionVector version_vector;
+  VersionVector version_vector(unique_id);
   unsigned int port = atoi(argv[1]);
   UDPClient udp_client(port, peers);
+
   ApplicationController controller(window, crdt_manager, udp_client, version_vector);
   controller.Go();
   controller.Shutdown();
