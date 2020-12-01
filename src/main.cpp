@@ -8,21 +8,21 @@
 #include <CRDTManager.hpp>
 #include <VersionVector.hpp>
 #include <stdlib.h>
+#include <CustomMessageException.hpp>
 std::string generateUniqueId();
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
   std::cout << "Starting Application" << std::endl;
 
-  if(argc < 3 || argc!=(3 + 2 * atoi(argv[2]))){
-  std::cout<<"Error: Not enough or invalid arguments, please enter in this format ./editor <client_port> <no_of_peers>"
-             " [<peer_ip> <peer_port> ...]"<<std::endl;
-  return 1;
+  if (argc < 3 || argc != (3 + 2 * atoi(argv[2]))) {
+    throw CustomMessageException(
+        "Error: Not enough or invalid arguments, please enter in this format ./editor <client_port> <no_of_peers>\"\n"
+        "             \" [<peer_ip> <peer_port> ...]");
   }
   std::vector<PeerAddress> peers; // take from console
-  for(int i=3;i<argc;i=i+2){
-    peers.push_back({sf::IpAddress(argv[i]),(unsigned short)(atoi(argv[i+1]))});
+  for (int i = 3; i < argc; i = i + 2) {
+    peers.push_back({sf::IpAddress(argv[i]), (unsigned short) (atoi(argv[i + 1]))});
   }
-
 
   EditorWindow window(sf::Color(47, 50, 47));
 
@@ -32,15 +32,6 @@ int main(int argc, char** argv) {
 
   std::vector<struct PeerAddress> dummy_peers; // take from console
   UDPClient udp_client(atoi(argv[1]), peers);
-
-
-  std::vector<long> positions(5, 1);
-  std::string site_id = "127.0.0.1:2002";
-  int counter = 2;
-  std::string text = "w";
-  CRDTAction crdt_action(DELETE, site_id, counter, text, positions);
-
-  udp_client.BroadcastActionToAllConnectedPeers(crdt_action);
   ApplicationController controller(window, crdt_manager, udp_client, version_vector);
   controller.Go();
   controller.Shutdown();

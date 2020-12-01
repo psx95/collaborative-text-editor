@@ -16,10 +16,8 @@ UDPClient::UDPClient(unsigned short port, std::vector<struct PeerAddress> &peer_
 }
 
 void UDPClient::Init() {
-  // Bind socket to port
   client_socket.bind(this->client_port);
-  client_socket.setBlocking(false);
-  // Initialize socket
+  client_socket.setBlocking(false); //make socket non-blocking
   std::thread ListeningThread(&UDPClient::StartListeningThread, this);
   thread_vector.push_back(std::move(ListeningThread));
 }
@@ -39,12 +37,16 @@ void UDPClient::StartListeningThread() {
       this->HandleIncomingPacket(packet);
     }
   }
-  std::cout << "Listening terminated" << std::endl;
 }
 
 void UDPClient::HandleOutgoingPacket(sf::Packet packet, PeerAddress peer_address) {
   sf::Socket::Status status = client_socket.send(packet, peer_address.ip_address, peer_address.port);
-  std::cout << "Send status " << status << std::endl;
+
+  if (status != sf::Socket::Status::Done) {
+    std::cout << "Broadcast Error" << "\t" << status << "\t" << "ip" << "\t" << peer_address.ip_address << "port"
+              << "\t" << peer_address.port;
+  }
+
 }
 
 void UDPClient::BroadcastActionToAllConnectedPeers(CRDTAction &crdt_action) {
@@ -53,12 +55,10 @@ void UDPClient::BroadcastActionToAllConnectedPeers(CRDTAction &crdt_action) {
          (int) crdt_action.Positions().size();
 
   for (long position:crdt_action.Positions()) {
-    packet << (sf::Int64)position;
+    packet << (sf::Int64) position;
   }
 
   for (PeerAddress peer_address: this->peer_addresses) {
-    std::cout << "Broadcast - " << peer_address.ip_address << "\t" << "port" << peer_address.port << std::endl;
-
     std::thread HandleOutgoingPacketThread(&UDPClient::HandleOutgoingPacket, this, packet, peer_address);
     thread_vector.push_back(std::move(HandleOutgoingPacketThread));
   }
@@ -66,21 +66,21 @@ void UDPClient::BroadcastActionToAllConnectedPeers(CRDTAction &crdt_action) {
 
 void UDPClient::HandleIncomingPacket(sf::Packet &packet) {
   int operation;
-  std::string site_id; // unique id of the client
-  int counter; // site counter managed by version vector
-  std::string text; // value of the string (current support for single chars) to be inserted.
+  std::string site_id;
+  int counter;
+  std::string text;
   int positions_size;
-  std::vector<long> positions; // fractional position calculated by CRDT.
+  std::vector<long> positions;
 
   packet >> operation >> site_id >> counter >> text >> positions_size;
 
   for (int i = 0; i < positions_size; i++) {
     sf::Int64 position;
     packet >> position;
-    positions.push_back((long)position);
+    positions.push_back((long) position);
   }
   CRDTAction crdt_action((CRDTOperation) operation, site_id, counter, text, positions);
-  crdt_action.Print();
+  std::cout << crdt_action.toString();
   client_callbacks->OnRemoteOperationReceive(crdt_action);
 }
 

@@ -24,7 +24,11 @@ enum CRDTOperation {
  */
 struct CRDTAction {
  public:
-  CRDTAction(CRDTOperation operation, std::string &site_id, int counter, std::string &text, std::vector<long> &positions)
+  CRDTAction(CRDTOperation operation,
+             std::string &site_id,
+             int counter,
+             std::string &text,
+             std::vector<long> &positions)
       : operation(operation), site_id(site_id), counter(counter), text(text), positions(positions) {
   }
 
@@ -48,16 +52,17 @@ struct CRDTAction {
     return positions;
   }
 
-  void Print() const{
-    std::cout<<"Operation "<<operation<<std::endl;
-    std::cout<<"site_id "<<site_id<<std::endl;
-    std::cout<<"counter "<<counter<<std::endl;
-    std::cout<<"text "<<text<<std::endl;
-    std::cout<<"positions ";
-    for(int position:positions){
-      std::cout<<position<<"\t";
+  std::string toString() {
+    std::string crdt_action_str;
+    crdt_action_str.append("Operation").append("\t").append(std::to_string(operation)).append("\n")
+        .append("site_id").append("\t").append(site_id).append("\n")
+        .append("counter").append("\t").append(std::to_string(counter)).append("\n")
+        .append("text").append("\t").append(text).append("\n")
+        .append("positions").append("\t");
+    for (long position:positions) {
+      crdt_action_str.append(std::to_string(position)).append("\t");
     }
-    std::cout<<std::endl;
+    return crdt_action_str.append("\n");
   }
 
  private:
