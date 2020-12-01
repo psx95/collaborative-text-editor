@@ -21,15 +21,15 @@ class CRDTManager {
   const int boundary = 20;
 
   CRDTCharacter GenerateCRDTCharacter(char c, int position_in_doc, int site_counter);
-  std::vector<int> GeneratePositionBetween(std::vector<int> &before,
-                                           std::vector<int> &after,
-                                           std::vector<int> &generated_position,
+  std::vector<long> GeneratePositionBetween(std::vector<long> &before,
+                                           std::vector<long> &after,
+                                           std::vector<long> &generated_position,
                                            int depth = 0);
 
-  std::vector<int> GeneratePositionBefore(int index);
-  std::vector<int> GeneratePositionAfter(int index);
+  std::vector<long> GeneratePositionBefore(int index);
+  std::vector<long> GeneratePositionAfter(int index);
   CRDTAllocationStrategy GetAllocationStrategyForDepth(int depth);
-  int GenerateNewPositionIdentifier(int minimum, int maximum, CRDTAllocationStrategy allocation_strategy);
+  long GenerateNewPositionIdentifier(long minimum, long maximum, CRDTAllocationStrategy allocation_strategy) const;
   static void ThrowCustomExceptionOnNegativeIndex(int index);
 
  public:

@@ -31,7 +31,7 @@ enum CRDTAllocationStrategy {
  */
 struct CRDTAction {
  public:
-  CRDTAction(CRDTOperation operation, std::string &site_id, int counter, std::string &text, std::vector<int> &positions)
+  CRDTAction(CRDTOperation operation, std::string &site_id, int counter, std::string &text, std::vector<long> &positions)
       : operation(operation), site_id(site_id), counter(counter), text(text), positions(positions) {
   }
 
@@ -58,7 +58,7 @@ struct CRDTAction {
     return text;
   }
 
-  std::vector<int> Positions() const {
+  std::vector<long> Positions() const {
     return positions;
   }
 
@@ -67,7 +67,7 @@ struct CRDTAction {
   std::string site_id; // unique id of the client
   int counter; // site counter managed by version vector
   std::string text; // value of the string (current support for single chars) to be inserted.
-  std::vector<int> positions; // fractional position calculated by CRDT.
+  std::vector<long> positions; // fractional position calculated by CRDT.
 };
 
 struct PeerAddress {

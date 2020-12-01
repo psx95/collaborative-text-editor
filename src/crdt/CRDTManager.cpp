@@ -37,43 +37,42 @@ int CRDTManager::GenerateDeleteInfoFromRemoteDelete(CRDTAction &remote_action) {
   throw CustomMessageException("Not implemented yet!");
 }
 
-
 //================================================================================
 // Private Helpers
 //================================================================================
 
 CRDTCharacter CRDTManager::GenerateCRDTCharacter(char c, int position_in_doc, int site_counter) {
-  std::vector<int> position_before = GeneratePositionBefore(position_in_doc);
-  std::vector<int> position_after = GeneratePositionAfter(position_in_doc);
-  std::vector<int> new_position;
+  std::vector<long> position_before = GeneratePositionBefore(position_in_doc);
+  std::vector<long> position_after = GeneratePositionAfter(position_in_doc);
+  std::vector<long> new_position;
   GeneratePositionBetween(position_before, position_after, new_position);
   return CRDTCharacter(c, site_counter, this->site_id, new_position);
 }
 
-std::vector<int> CRDTManager::GeneratePositionBetween(std::vector<int> &before,
-                                                      std::vector<int> &after,
-                                                      std::vector<int> &generated_position,
-                                                      int depth) {
+std::vector<long> CRDTManager::GeneratePositionBetween(std::vector<long> &before,
+                                                       std::vector<long> &after,
+                                                       std::vector<long> &generated_position,
+                                                       int depth) {
   int base = (int) std::pow(base_multiple, depth) * this->starting_base;
   CRDTAllocationStrategy strategy_at_depth = GetAllocationStrategyForDepth(depth);
   // if no positions, then probably its a new level and in a new level, the available identifiers can go from 0 to
   // base size computed for that level (base size is exponentially increased at each level)
-  int current_level_from_before_position = !before.empty() ? before.at(0) : 0;
-  int current_level_from_after_position = !after.empty() ? after.at(0) : base;
-  int interval_between_positions = current_level_from_after_position - current_level_from_before_position;
+  long current_level_from_before_position = !before.empty() ? before.at(0) : 0;
+  long current_level_from_after_position = !after.empty() ? after.at(0) : base;
+  long interval_between_positions = current_level_from_after_position - current_level_from_before_position;
   if (interval_between_positions > 1) {
     // we have enough space to add a new character without increasing depth of the tree
     // generate a new position based on strategy
-    int new_position = GenerateNewPositionIdentifier(current_level_from_before_position,
-                                                     current_level_from_after_position,
-                                                     strategy_at_depth);
+    long new_position = GenerateNewPositionIdentifier(current_level_from_before_position,
+                                                      current_level_from_after_position,
+                                                      strategy_at_depth);
     generated_position.push_back(new_position);
     return generated_position;
   } else if (interval_between_positions == 1) {
     // there is still not enough space and we need to add a new level to the tree
     generated_position.push_back(current_level_from_before_position);
     before.erase(before.begin());
-    std::vector<int> vector;
+    std::vector<long> vector;
     GeneratePositionBetween(before, vector, generated_position, depth + 1);
   } else if (interval_between_positions == 0) {
     // the start and end positions are the same, so have not yet reached the bottom of the tree (required depth) to make
@@ -87,21 +86,21 @@ std::vector<int> CRDTManager::GeneratePositionBetween(std::vector<int> &before,
     }
     GeneratePositionBetween(before, after, generated_position, depth + 1);
   }
-  return std::vector<int>();
+  return std::vector<long>();
 }
 
-std::vector<int> CRDTManager::GeneratePositionBefore(int index) {
+std::vector<long> CRDTManager::GeneratePositionBefore(int index) {
   ThrowCustomExceptionOnNegativeIndex(index);
   if (index == 0) {
-    return std::vector<int>();
+    return std::vector<long>();
   }
   return this->characters->at(index - 1).GetPositions();
 }
 
-std::vector<int> CRDTManager::GeneratePositionAfter(int index) {
+std::vector<long> CRDTManager::GeneratePositionAfter(int index) {
   ThrowCustomExceptionOnNegativeIndex(index);
   if (index >= this->characters->size()) {
-    return std::vector<int>();
+    return std::vector<long>();
   }
   return this->characters->at(index).GetPositions();
 }
@@ -121,9 +120,11 @@ CRDTAllocationStrategy CRDTManager::GetAllocationStrategyForDepth(int depth) {
   return map_pos->second;
 }
 
-int CRDTManager::GenerateNewPositionIdentifier(int minimum, int maximum, CRDTAllocationStrategy allocation_strategy) {
+long CRDTManager::GenerateNewPositionIdentifier(long minimum,
+                                                long maximum,
+                                                CRDTAllocationStrategy allocation_strategy) const {
   // generate a random number between max & minimum, but within boundary
-  int step_value = std::min(maximum - minimum, boundary);
+  int step_value = std::min(maximum - minimum, (long) boundary);
   std::random_device rd;
   std::mt19937_64 gen(rd());
   if (allocation_strategy == RANDOM) {

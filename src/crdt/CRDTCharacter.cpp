@@ -3,7 +3,7 @@
 //
 
 #include "CRDTCharacter.hpp"
-CRDTCharacter::CRDTCharacter(char value, int counter, std::string &site_id, std::vector<int> &positions) {
+CRDTCharacter::CRDTCharacter(char value, int counter, std::string &site_id, std::vector<long> &positions) {
   this->value = value;
   this->counter = counter;
   this->site_id = site_id;
@@ -22,6 +22,6 @@ const std::string &CRDTCharacter::GetSiteId() const {
   return site_id;
 }
 
-const std::vector<int> &CRDTCharacter::GetPositions() const {
+const std::vector<long> &CRDTCharacter::GetPositions() const {
   return positions;
 }
