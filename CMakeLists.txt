@@ -23,6 +23,13 @@ message(STATUS "BUILDING FOR ${CMAKE_SYSTEM}")
 add_executable(collaborative_text_editor ${SOURCE} ./src/main.cpp)
 add_executable(collaborative_text_editor_test ${SOURCE} ${TEST_SOURCE})
 
+FIND_PACKAGE(Boost REQUIRED)
+if (Boost_FOUND)
+    include_directories(${Boost_INCLUDE_DIRS})
+else ()
+    message(STATUS "Boost NOT Found !")
+endif (Boost_FOUND)
+
 #Providing the specific libraries to use. This line needs to come after adding executables
 target_link_libraries(collaborative_text_editor sfml-graphics sfml-window sfml-system sfml-network GL pthread)
 target_link_libraries(collaborative_text_editor_test sfml-graphics sfml-window sfml-system sfml-network GL pthread)
