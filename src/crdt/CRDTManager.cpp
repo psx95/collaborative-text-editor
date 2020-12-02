@@ -30,11 +30,15 @@ struct CRDTAction CRDTManager::GenerateCRDTActionForLocalDelete(int index, int s
 }
 
 std::pair<std::string, int> CRDTManager::GenerateStringInsertInfoFromRemoteInsert(CRDTAction &remote_action) {
-  throw CustomMessageException("Not implemented yet!");
+  int remote_insert_position = (int) this->FindRemoteInsertPosition(remote_action.Character());
+  this->characters->insert(this->characters->begin() + remote_insert_position, remote_action.Character());
+  return {remote_action.Text(), remote_insert_position};
 }
 
 int CRDTManager::GenerateDeleteInfoFromRemoteDelete(CRDTAction &remote_action) {
-  throw CustomMessageException("Not implemented yet!");
+  int remote_delete_position = (int) this->FindRemoteDeletePosition(remote_action.Character());
+  this->characters->erase(this->characters->begin() + remote_delete_position);
+  return remote_delete_position;
 }
 
 //================================================================================
@@ -71,7 +75,9 @@ std::vector<long> CRDTManager::GeneratePositionBetween(std::vector<long> &before
   } else if (interval_between_positions == 1) {
     // there is still not enough space and we need to add a new level to the tree
     generated_position.push_back(current_level_from_before_position);
-    before.erase(before.begin());
+    if (!before.empty()) {
+      before.erase(before.begin());
+    }
     std::vector<long> vector;
     GeneratePositionBetween(before, vector, generated_position, depth + 1);
   } else if (interval_between_positions == 0) {
@@ -124,7 +130,7 @@ long CRDTManager::GenerateNewPositionIdentifier(long minimum,
                                                 long maximum,
                                                 CRDTAllocationStrategy allocation_strategy) const {
   // generate a random number between max & minimum, but within boundary
-  int step_value = std::min(maximum - minimum, (long) boundary);
+  int step_value = std::min(maximum - minimum - 1, (long) boundary);
   std::random_device rd;
   std::mt19937_64 gen(rd());
   if (allocation_strategy == RANDOM) {
@@ -139,6 +145,61 @@ long CRDTManager::GenerateNewPositionIdentifier(long minimum,
     return maximum - (1 + random_number(gen));
   }
   throw CustomMessageException("Fix Position Identifier Generation !");
+}
+
+int CRDTManager::FindRemoteInsertPosition(CRDTCharacter remote_character) {
+  int start = 0;
+  int end = (int) this->characters->size() - 1;
+  // if there are no characters instead, or the current character is supposed to be before the current start character
+  if (this->characters->empty() || remote_character.ComparePositionTo(this->characters->at(start)) < 0) {
+    return start;
+  }
+  // if the character to be inserted is at the last position
+  if (remote_character.ComparePositionTo(this->characters->at(end)) > 0) {
+    return end;
+  }
+  // run binary search to find the correct insert position, much like in the TextFileContent.
+  while ((start + 1) < end) {
+    int mid = std::floor(start + (end - start) / 2);
+    int compare_result = remote_character.ComparePositionTo(this->characters->at(mid));
+    if (compare_result == 0) {
+      return mid;
+    } else if (compare_result < 0) {
+      end = mid;
+    } else if (compare_result > 0) {
+      start = mid;
+    }
+  }
+  // will be the case with odd number of characters (case like end = start + 1) at the end of while loop
+  // in such cases, the correct insert position will either be the last recorded start or last recorded end
+  return remote_character.ComparePositionTo(this->characters->at(start)) == 0 ? start : end;
+}
+
+int CRDTManager::FindRemoteDeletePosition(CRDTCharacter remote_character) {
+  int start = 0;
+  int end = (int) this->characters->size() - 1;
+  if (this->characters->empty()) {
+    throw CustomMessageException("Character to delete not present in CRDT. CRDT empty!");
+  }
+  while ((start + 1) < end) {
+    int mid = std::floor(start + (end - start) / 2);
+    int compare_result = remote_character.ComparePositionTo(this->characters->at(mid));
+    if (compare_result == 0) {
+      return mid;
+    } else if (compare_result < 0) {
+      end = mid;
+    } else if (compare_result > 0) {
+      start = mid;
+    }
+  }
+  // The correct delete position outside the position has to be one of start or end
+  if (remote_character.ComparePositionTo(this->characters->at(start)) == 0) {
+    return start;
+  }
+  if (remote_character.ComparePositionTo(this->characters->at(end)) == 0) {
+    return end;
+  }
+  throw CustomMessageException("Character to delete not present in CRDT!");
 }
 
 //================================================================================

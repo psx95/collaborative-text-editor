@@ -56,6 +56,9 @@ class CRDTManager {
   std::vector<long> GeneratePositionAfter(int index);
   CRDTAllocationStrategy GetAllocationStrategyForDepth(int depth);
   long GenerateNewPositionIdentifier(long minimum, long maximum, CRDTAllocationStrategy allocation_strategy) const;
+
+  int FindRemoteInsertPosition(CRDTCharacter remote_character);
+  int FindRemoteDeletePosition(CRDTCharacter remote_character);
   static void ThrowCustomExceptionOnNegativeIndex(int index);
 
  public:
@@ -83,8 +86,22 @@ class CRDTManager {
    */
   struct CRDTAction GenerateCRDTActionForLocalDelete(int index, int site_counter);
 
+  /*!
+   * @brief This method can be used to generate the information required to locally process a remote insert.
+   * @details The method computes the appropriate position for inserting the CRDTCharacter passed in the CRDTAction on
+   * the local editor.
+   * @param remote_action The remote CRDTAction that triggered a local insert on the current node.
+   * @return A pair containing the character inserted & its computed position for insert on the current node.
+   */
   std::pair<std::string, int> GenerateStringInsertInfoFromRemoteInsert(struct CRDTAction &remote_action);
 
+  /*!
+   * @brief This method is used to generate the information required to locally process a remote delete.
+   * @details This method computes the appropriate position in the local text, from which a character needs to be
+   * deleted.
+   * @param remote_action The remote CRDTAction that triggered a local delete on the current node.
+   * @return The local index of the character that needs to be deleted.
+   */
   int GenerateDeleteInfoFromRemoteDelete(struct CRDTAction &remote_action);
 
   ~CRDTManager();

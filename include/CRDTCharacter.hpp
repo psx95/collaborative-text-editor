@@ -56,6 +56,15 @@ class CRDTCharacter {
    * @return The positions array which can be used to determine the position of the array in document.
    */
   const std::vector<long> &GetPositions() const;
+
+  /*!
+   * @brief This method compares positions of the current CRDTCharacter with another CRDTCharacter.
+   * @details The method returns an int
+   * @param other_character The other character to which current character's position is to be compared.
+   * @return An integer. 0 if the character positions are same, 1 if the current character should come after the
+   * other_character, -1 if the current character should appear before the other_character.
+   */
+  int ComparePositionTo(CRDTCharacter &other_character);
 };
 
 #endif //COLLABORATIVE_TEXT_EDITOR_SRC_CRDT_CRDTCHARACTER_HPP_

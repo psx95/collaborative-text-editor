@@ -25,3 +25,23 @@ const std::string &CRDTCharacter::GetSiteId() const {
 const std::vector<long> &CRDTCharacter::GetPositions() const {
   return positions;
 }
+
+int CRDTCharacter::ComparePositionTo(CRDTCharacter &other_character) {
+  std::vector<long> other_position = other_character.GetPositions();
+  int min_length = std::min(other_position.size(), this->positions.size());
+  for (int i = 0; i < min_length; i++) {
+    int compare_result = (int) (this->positions.at(i) - other_position.at(i));
+    if (compare_result != 0) {
+      return compare_result;
+    }
+  }
+  // so far all positions were same, so check for size inequality
+  int compare_result = (int) (this->positions.size() - other_position.size());
+  if (compare_result < 0) {
+    return -1;
+  }
+  if (compare_result > 0) {
+    return 1;
+  }
+  return 0;
+}
