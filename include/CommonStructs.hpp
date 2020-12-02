@@ -49,7 +49,11 @@ enum CRDTAllocationStrategy {
  */
 struct CRDTAction {
  public:
-  CRDTAction(CRDTOperation operation, std::string &site_id, int counter, std::string &text, std::vector<long> &positions)
+  CRDTAction(CRDTOperation operation,
+             std::string &site_id,
+             int counter,
+             std::string &text,
+             std::vector<long> &positions)
       : operation(operation), site_id(site_id), counter(counter), text(text), positions(positions) {
   }
 
@@ -58,6 +62,14 @@ struct CRDTAction {
     counter = character.GetCounter();
     text = character.GetValue();
     positions = character.GetPositions();
+  }
+
+  /*!
+   * @brief Calling this method will generate a CRDTCharacter from the raw values contained in the struct.
+   * @return A copy of CRDTCharacter object on which this CRDTAction was intended.
+   */
+  CRDTCharacter Character() {
+    return CRDTCharacter(text.at(0), counter, site_id, positions);
   }
 
   CRDTOperation Operation() const {
