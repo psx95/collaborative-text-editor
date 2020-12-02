@@ -3,7 +3,24 @@
 ### About the Project
 A decentralized C++ based text editor that allows multiple users to collaborate simultaneously in real-time.
 
+### Prerequisites
+
+- [CMake](https://cmake.org/install/)
+- [Boost](https://www.boost.org/doc/libs/release/more/getting_started/unix-variants.html)
+
+ 
 ### Installing and running the application
+
+#### Installing Boost
+On a Debian based Linux (like Ubuntu), you can use `apt` to install boost directly. For other distributions, check the official boost documentation linked above.
+
+```console
+$ sudo apt install libboost-dev
+$ sudo apt install libboost-all-dev
+```
+
+-----
+
 The application is built using CMake as build tool. Additionally, SFML is required to compile the application. 
 SFML libraries can be installed on linux relatively easily via the following command - `sudo apt-get install libsfml-dev`.
 
