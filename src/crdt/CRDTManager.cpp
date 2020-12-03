@@ -41,6 +41,10 @@ int CRDTManager::GenerateDeleteInfoFromRemoteDelete(CRDTAction &remote_action) {
   return remote_delete_position;
 }
 
+std::vector<CRDTCharacter> *CRDTManager::GetCRDTCharacters() const {
+  return this->characters;
+}
+
 //================================================================================
 // Private Helpers
 //================================================================================
@@ -130,21 +134,28 @@ long CRDTManager::GenerateNewPositionIdentifier(long minimum,
                                                 long maximum,
                                                 CRDTAllocationStrategy allocation_strategy) const {
   // generate a random number between max & minimum, but within boundary
-  int step_value = std::min(maximum - minimum - 1, (long) boundary);
   std::random_device rd;
   std::mt19937_64 gen(rd());
-  if (allocation_strategy == RANDOM) {
-    std::uniform_int_distribution<int> random_number(1, 2);
-    allocation_strategy = static_cast<CRDTAllocationStrategy>(random_number(gen));
+  std::uniform_real_distribution<float> random_number(0.0, 1.0);
+  // if maximum index - minimum index is less than boundary then the number will simply be between min + 1 & max
+  // boundary strategy does not matter. since min + boundary or max - boundary will be out of range
+  if (maximum - minimum < boundary) {
+    minimum = minimum + 1;
+  } else {
+    // maximum - minimum >= boundary => possible to use both strategies
+    if (allocation_strategy == BOUNDARY_MINUS) {
+      // maximum remains same, since we need to choose a number near the maximum value so shift minimum ahead
+      minimum = maximum - boundary;
+    } else {
+      // minimum remains same, since we need to choose a number near the minimum value, so shift maximum behind
+      minimum = minimum + 1;
+      maximum = minimum + this->boundary;
+    }
   }
-  std::uniform_int_distribution<int> random_number(0, step_value);
-  if (allocation_strategy == BOUNDARY_PLUS) {
-    return minimum + 1 + random_number(gen);
-  }
-  if (allocation_strategy == BOUNDARY_MINUS) {
-    return maximum - (1 + random_number(gen));
-  }
-  throw CustomMessageException("Fix Position Identifier Generation !");
+  // max & min are both set according to strategy, find a random number in between
+  // better would be to create a uniform distribution of ints, and choose a number from them, but doing this so as to
+  // avoid creating a new uniform distribution object.
+  return (int) std::floor(random_number(gen) * (float) (maximum - minimum)) + minimum;
 }
 
 int CRDTManager::FindRemoteInsertPosition(CRDTCharacter remote_character) {

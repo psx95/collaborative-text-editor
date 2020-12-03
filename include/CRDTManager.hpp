@@ -24,7 +24,7 @@ class CRDTManager {
  private:
   std::string &site_id; // should be unique across all clients, could use UUID or IP-port combo
   std::map<int, CRDTAllocationStrategy> *strategy_map{}; // map maintains strategy used at each level
-  std::vector<struct CRDTCharacter> *characters{}; // vector maintaining the CRDTCharacters present in the text document
+  std::vector<CRDTCharacter> *characters{}; // vector maintaining the CRDTCharacters present in the text document
   int starting_base = 16; // the starting base used by the allocation strategy
   int base_exp = 2; // when the base is increased exp is the base of the power to which the base increased.
   const int boundary = 20; // fixed boundary
@@ -103,6 +103,12 @@ class CRDTManager {
    * @return The local index of the character that needs to be deleted.
    */
   int GenerateDeleteInfoFromRemoteDelete(struct CRDTAction &remote_action);
+
+  /*!
+   * @brief Getter for CRDTCharacters, this method should not be used except for purposes of unit testing.
+   * @return The vector containing all the CRDTCharacters managed by the CRDTManager.
+   */
+  std::vector<CRDTCharacter> *GetCRDTCharacters() const;
 
   ~CRDTManager();
 };
