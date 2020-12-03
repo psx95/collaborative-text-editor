@@ -8,7 +8,7 @@ SET(SOURCE src/editor/EditorWindow.cpp src/editor/Cursor.cpp src/editor/EditorCo
 # header files in the project, third party headers not included
 SET(HEADERS include/EditorWindow.hpp include/Cursor.hpp include/EditorContent.hpp include/EditorView.hpp include/InputHandler.hpp include/StringUtils.hpp include/TextFileContent.hpp include/ApplicationController.hpp include/EditorCallbacks.hpp include/CustomMessageException.hpp include/CRDTManager.hpp include/CommonStructs.hpp include/NetworkingCallbacks.hpp include/UDPClient.hpp include/VersionVector.hpp include/CRDTCharacter.hpp)
 # test source files in the project
-SET(TEST_SOURCE tst/crdt_action_test.cpp)
+SET(TEST_SOURCE tst/crdt_action_test.cpp tst/crdt_manager_test.cpp)
 
 #Providing location of include directories containing header files
 include_directories("usr/include/")
