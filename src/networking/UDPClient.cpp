@@ -2,16 +2,13 @@
 // Created by psx95 on 11/27/20.
 //
 
+#include<iostream>
 #include <CustomMessageException.hpp>
 #include "UDPClient.hpp"
-#include<iostream>
 
 UDPClient::UDPClient(unsigned short port, std::vector<struct PeerAddress> &peer_addresses) {
   this->client_port = port;
   this->peer_addresses = peer_addresses;
-  for (PeerAddress peer: peer_addresses) {
-    std::cout << peer.ip_address << "\t" << peer.port << std::endl;
-  }
   Init();
 }
 
@@ -19,7 +16,7 @@ void UDPClient::Init() {
   client_socket.bind(this->client_port);
   client_socket.setBlocking(false); //make socket non-blocking
   std::thread ListeningThread(&UDPClient::StartListeningThread, this);
-  thread_vector.push_back(std::move(ListeningThread));
+  ListeningThread.detach();
 }
 
 void UDPClient::StartListeningThread() {
@@ -46,7 +43,6 @@ void UDPClient::HandleOutgoingPacket(sf::Packet packet, PeerAddress peer_address
     std::cout << "Broadcast Error" << "\t" << status << "\t" << "ip" << "\t" << peer_address.ip_address << "port"
               << "\t" << peer_address.port;
   }
-
 }
 
 void UDPClient::BroadcastActionToAllConnectedPeers(CRDTAction &crdt_action) {
@@ -60,7 +56,7 @@ void UDPClient::BroadcastActionToAllConnectedPeers(CRDTAction &crdt_action) {
 
   for (PeerAddress peer_address: this->peer_addresses) {
     std::thread HandleOutgoingPacketThread(&UDPClient::HandleOutgoingPacket, this, packet, peer_address);
-    thread_vector.push_back(std::move(HandleOutgoingPacketThread));
+    HandleOutgoingPacketThread.detach();
   }
 }
 
@@ -86,9 +82,6 @@ void UDPClient::HandleIncomingPacket(sf::Packet &packet) {
 
 void UDPClient::ShutdownClient() {
   client_listening.store(false, std::memory_order_relaxed);
-  for (auto &th : thread_vector) {
-    th.join();
-  }
 }
 
 void UDPClient::SetClientCallbacks(NetworkingCallbacks *callbacks) {

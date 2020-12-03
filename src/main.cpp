@@ -1,13 +1,12 @@
 #include <iostream>
+#include <stdlib.h>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
-
 #include <EditorWindow.hpp>
 #include <ApplicationController.hpp>
 #include <CRDTManager.hpp>
 #include <VersionVector.hpp>
-#include <stdlib.h>
 #include <CustomMessageException.hpp>
 std::string generateUniqueId();
 
@@ -29,9 +28,8 @@ int main(int argc, char **argv) {
   std::string unique_id = generateUniqueId();
   CRDTManager crdt_manager(unique_id);
   VersionVector version_vector;
-
-  std::vector<struct PeerAddress> dummy_peers; // take from console
-  UDPClient udp_client(atoi(argv[1]), peers);
+  unsigned int port = atoi(argv[1]);
+  UDPClient udp_client(port, peers);
   ApplicationController controller(window, crdt_manager, udp_client, version_vector);
   controller.Go();
   controller.Shutdown();

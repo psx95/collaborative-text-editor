@@ -4,15 +4,14 @@
 
 #ifndef COLLABORATIVE_TEXT_EDITOR_SRC_NETWORKING_UDPCLIENT_HPP_
 #define COLLABORATIVE_TEXT_EDITOR_SRC_NETWORKING_UDPCLIENT_HPP_
-
+#include <vector>
+#include <atomic>
+#include <thread>
 #include <SFML/Network/IpAddress.hpp>
 #include <SFML/Network/Packet.hpp>
 #include <SFML/Network/UdpSocket.hpp>
-#include <vector>
-#include <atomic>
 #include "CommonStructs.hpp"
 #include "NetworkingCallbacks.hpp"
-#include <thread>
 
 class UDPClient {
  private:
@@ -21,7 +20,6 @@ class UDPClient {
   std::atomic<bool> client_listening{}; // a boolean to indicate if the current client is listening for incoming packets
   NetworkingCallbacks *client_callbacks{}; // client callbacks used by controller to define code that must run on events
   sf::UdpSocket client_socket; // the udp socket which the client app can use for networking
-  std::vector<std::thread> thread_vector;
   void Init(); // any one time initialization steps
   void StartListeningThread(); // helper method to start the listening functionality in a background thread
   void HandleIncomingPacket(sf::Packet &packet); // handle incoming packet with CRDT Action
@@ -54,8 +52,6 @@ class UDPClient {
    * system.
    */
   void ShutdownClient(); // safe disconnect + stop listening thread
-
-
 };
 
 #endif //COLLABORATIVE_TEXT_EDITOR_SRC_NETWORKING_UDPCLIENT_HPP_
