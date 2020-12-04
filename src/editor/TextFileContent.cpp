@@ -37,7 +37,7 @@ int TextFileContent::AddTextAtPosition(sf::String &text, int line_number, int co
   }
 
   for (int i = 0; i < text.getSize(); i++) {
-    if (text[i] == '\n' || text[i] == 13) {
+    if (text[i] == '\n' || text[i] == 13 || text[i] == 10) {
       int new_line_start_position = text_insert_position + i + 1; // +1 because the new line will start after \n
       // insert the new line character to the line positions
       // lower_bound will find a position between begin and end that is just less than new_line_start_position
@@ -57,7 +57,7 @@ int TextFileContent::RemoveTextFromPosition(int amount, int line_number, int col
   this->line_positions.clear();
   this->line_positions.push_back(0);
   for (int i = 0; i < this->string_content.getSize(); i++) {
-    if (this->string_content[i] == '\n' || this->string_content[i] == 13) {
+    if (this->string_content[i] == '\n' || this->string_content[i] == 13 || this->string_content[i] == 10) {
       this->line_positions.push_back(i + 1); // line starts after \n
     }
   }
