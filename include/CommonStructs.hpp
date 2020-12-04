@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include <SFML/Network/IpAddress.hpp>
+#include <iostream>
 
 #include "CRDTCharacter.hpp"
 
@@ -92,6 +93,19 @@ struct CRDTAction {
     return positions;
   }
 
+  std::string ToString() {
+    std::string crdt_action_str;
+    crdt_action_str.append("Operation").append("\t").append(std::to_string(operation)).append("\n")
+        .append("site_id").append("\t").append(site_id).append("\n")
+        .append("counter").append("\t").append(std::to_string(counter)).append("\n")
+        .append("text").append("\t").append(text).append("\n")
+        .append("positions").append("\t");
+    for (long position:positions) {
+      crdt_action_str.append(std::to_string(position)).append("\t");
+    }
+    return crdt_action_str.append("\n");
+  }
+
  private:
   CRDTOperation operation;
   std::string site_id; // unique id of the client
@@ -102,7 +116,7 @@ struct CRDTAction {
 
 struct PeerAddress {
   sf::IpAddress ip_address; // ensures that the address is complaint & valid, not just any random string
-  unsigned short port{}; // port at which the connected client runs.
+  unsigned short port; // port at which the connected client runs.
 };
 
 #endif //COLLABORATIVE_TEXT_EDITOR_INCLUDE_COMMONSTRUCTS_HPP_
