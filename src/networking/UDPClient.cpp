@@ -2,7 +2,7 @@
 // Created by psx95 on 11/27/20.
 //
 
-#include<iostream>
+#include <iostream>
 #include <CustomMessageException.hpp>
 #include "UDPClient.hpp"
 
@@ -15,8 +15,8 @@ UDPClient::UDPClient(unsigned short port, std::vector<struct PeerAddress> &peer_
 void UDPClient::Init() {
   client_socket.bind(this->client_port);
   client_socket.setBlocking(false); //make socket non-blocking
-  std::thread ListeningThread(&UDPClient::StartListeningThread, this);
-  ListeningThread.detach();
+  std::thread listeningThread(&UDPClient::StartListeningThread, this);
+  listeningThread.detach();
 }
 
 void UDPClient::StartListeningThread() {
@@ -55,8 +55,8 @@ void UDPClient::BroadcastActionToAllConnectedPeers(CRDTAction &crdt_action) {
   }
 
   for (PeerAddress peer_address: this->peer_addresses) {
-    std::thread HandleOutgoingPacketThread(&UDPClient::HandleOutgoingPacket, this, packet, peer_address);
-    HandleOutgoingPacketThread.detach();
+    std::thread handleOutgoingPacketThread(&UDPClient::HandleOutgoingPacket, this, packet, peer_address);
+    handleOutgoingPacketThread.detach();
   }
 }
 
@@ -76,7 +76,7 @@ void UDPClient::HandleIncomingPacket(sf::Packet &packet) {
     positions.push_back((long) position);
   }
   CRDTAction crdt_action((CRDTOperation) operation, site_id, counter, text, positions);
-  std::cout << crdt_action.toString();
+  std::cout << crdt_action.ToString();
   client_callbacks->OnRemoteOperationReceive(crdt_action);
 }
 

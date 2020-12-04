@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 #include <SFML/Network/IpAddress.hpp>
-#include<iostream>
+#include <iostream>
 
 enum CRDTOperation {
   INSERT = 0,
@@ -52,7 +52,7 @@ struct CRDTAction {
     return positions;
   }
 
-  std::string toString() {
+  std::string ToString() {
     std::string crdt_action_str;
     crdt_action_str.append("Operation").append("\t").append(std::to_string(operation)).append("\n")
         .append("site_id").append("\t").append(site_id).append("\n")
