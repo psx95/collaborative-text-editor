@@ -42,7 +42,7 @@ void InputHandler::HandleTextEntryEvents(EditorView &editor_view, sf::RenderWind
   if (event.text.unicode == 8 || event.text.unicode == 127) {
     // filter out backspace and delete and treat them similarly
     editor_content.DeleteCharacterFromCursorPosition(1);
-  } else if (event.text.unicode >= 32 || event.text.unicode == 13) {
+  } else if (event.text.unicode >= 32 || event.text.unicode == 13 || event.text.unicode == 10) {
     // handle only ascii characters
     editor_content.InsertStringAtCursor(sf::String(event.text.unicode));
   }
