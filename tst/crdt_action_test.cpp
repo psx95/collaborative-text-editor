@@ -6,7 +6,7 @@
 #include "CommonStructs.hpp"
 
 TEST_CASE("Initializing CRDTAction immutable") {
-  std::vector<int> positions(1, 0);
+  std::vector<long> positions(1, 0);
   std::string site_id = "127.0.0.1:2002";
   int counter = 2;
   std::string text = "w";
@@ -22,7 +22,7 @@ TEST_CASE("Initializing CRDTAction immutable") {
 }
 
 TEST_CASE("Immutable CRDTAction maybe replaced") {
-  std::vector<int> positions(1, 0);
+  std::vector<long> positions(1, 0);
   std::string site_id = "127.0.0.1:2002";
   int counter = 2;
   std::string text = "w";
@@ -36,7 +36,7 @@ TEST_CASE("Immutable CRDTAction maybe replaced") {
     REQUIRE(action.Positions().at(i) == positions.at(i));
   }
 
-  std::vector<int> positions_1(1, 2);
+  std::vector<long> positions_1(1, 2);
   std::string site_id_1 = "127.0.0.1:2003";
   int counter_1 = 3;
   std::string text_1 = "q";

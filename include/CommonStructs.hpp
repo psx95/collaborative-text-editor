@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include <SFML/Network/IpAddress.hpp>
+#include <iostream>
 
 enum CRDTOperation {
   INSERT = 0,
@@ -23,7 +24,11 @@ enum CRDTOperation {
  */
 struct CRDTAction {
  public:
-  CRDTAction(CRDTOperation operation, std::string &site_id, int counter, std::string &text, std::vector<int> &positions)
+  CRDTAction(CRDTOperation operation,
+             std::string &site_id,
+             int counter,
+             std::string &text,
+             std::vector<long> &positions)
       : operation(operation), site_id(site_id), counter(counter), text(text), positions(positions) {
   }
 
@@ -43,8 +48,21 @@ struct CRDTAction {
     return text;
   }
 
-  std::vector<int> Positions() const {
+  std::vector<long> Positions() const {
     return positions;
+  }
+
+  std::string ToString() {
+    std::string crdt_action_str;
+    crdt_action_str.append("Operation").append("\t").append(std::to_string(operation)).append("\n")
+        .append("site_id").append("\t").append(site_id).append("\n")
+        .append("counter").append("\t").append(std::to_string(counter)).append("\n")
+        .append("text").append("\t").append(text).append("\n")
+        .append("positions").append("\t");
+    for (long position:positions) {
+      crdt_action_str.append(std::to_string(position)).append("\t");
+    }
+    return crdt_action_str.append("\n");
   }
 
  private:
@@ -52,12 +70,12 @@ struct CRDTAction {
   std::string site_id; // unique id of the client
   int counter; // site counter managed by version vector
   std::string text; // value of the string (current support for single chars) to be inserted.
-  std::vector<int> positions; // fractional position calculated by CRDT.
+  std::vector<long> positions; // fractional position calculated by CRDT.
 };
 
 struct PeerAddress {
   sf::IpAddress ip_address; // ensures that the address is complaint & valid, not just any random string
-  unsigned short port{}; // port at which the connected client runs.
+  unsigned short port; // port at which the connected client runs.
 };
 
 #endif //COLLABORATIVE_TEXT_EDITOR_INCLUDE_COMMONSTRUCTS_HPP_

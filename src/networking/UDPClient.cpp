@@ -2,6 +2,7 @@
 // Created by psx95 on 11/27/20.
 //
 
+#include <iostream>
 #include <CustomMessageException.hpp>
 #include "UDPClient.hpp"
 
@@ -12,26 +13,75 @@ UDPClient::UDPClient(unsigned short port, std::vector<struct PeerAddress> &peer_
 }
 
 void UDPClient::Init() {
-  // Bind socket to port
-  // Initialize socket
-  StartListeningThread();
+  client_socket.bind(this->client_port);
+  client_socket.setBlocking(false); //make socket non-blocking
+  std::thread listeningThread(&UDPClient::StartListeningThread, this);
+  listeningThread.detach();
 }
 
 void UDPClient::StartListeningThread() {
+  std::cout << "Listening " << std::endl;
   client_listening.store(true, std::memory_order_relaxed);
-  // call handle packet from here
+
+  while (client_listening.load(std::memory_order_relaxed)) {
+    sf::Packet packet;
+    sf::IpAddress sender;
+    unsigned short port;
+    sf::Socket::Status status;
+    status = client_socket.receive(packet, sender, port);
+
+    if (status == sf::Socket::Status::Done) {
+      this->HandleIncomingPacket(packet);
+    }
+  }
+}
+
+void UDPClient::HandleOutgoingPacket(sf::Packet packet, PeerAddress peer_address) {
+  sf::Socket::Status status = client_socket.send(packet, peer_address.ip_address, peer_address.port);
+
+  if (status != sf::Socket::Status::Done) {
+    std::cout << "Broadcast Error" << "\t" << status << "\t" << "ip" << "\t" << peer_address.ip_address << "port"
+              << "\t" << peer_address.port;
+  }
 }
 
 void UDPClient::BroadcastActionToAllConnectedPeers(CRDTAction &crdt_action) {
+  sf::Packet packet;
+  packet << crdt_action.Operation() << crdt_action.SiteId() << crdt_action.Counter() << crdt_action.Text() <<
+         (int) crdt_action.Positions().size();
 
+  for (long position:crdt_action.Positions()) {
+    packet << (sf::Int64) position;
+  }
+
+  for (PeerAddress peer_address: this->peer_addresses) {
+    std::thread handleOutgoingPacketThread(&UDPClient::HandleOutgoingPacket, this, packet, peer_address);
+    handleOutgoingPacketThread.detach();
+  }
 }
 
 void UDPClient::HandleIncomingPacket(sf::Packet &packet) {
-  //client_callbacks->OnRemoteOperationReceive(<packet parsed to get CRDTAction>);
+  int operation;
+  std::string site_id;
+  int counter;
+  std::string text;
+  int positions_size;
+  std::vector<long> positions;
+
+  packet >> operation >> site_id >> counter >> text >> positions_size;
+
+  for (int i = 0; i < positions_size; i++) {
+    sf::Int64 position;
+    packet >> position;
+    positions.push_back((long) position);
+  }
+  CRDTAction crdt_action((CRDTOperation) operation, site_id, counter, text, positions);
+  std::cout << crdt_action.ToString();
+  client_callbacks->OnRemoteOperationReceive(crdt_action);
 }
 
 void UDPClient::ShutdownClient() {
-
+  client_listening.store(false, std::memory_order_relaxed);
 }
 
 void UDPClient::SetClientCallbacks(NetworkingCallbacks *callbacks) {
