@@ -61,7 +61,7 @@ void ApplicationController::OnRemoteOperationReceive(struct CRDTAction &crdt_act
 void ApplicationController::OnRemoteInsertReceive(struct CRDTAction &crdt_action) {
   std::cout << "Networking Callback: remote insert packet received from client " << crdt_action.SiteId() << std::endl;
   std::pair<std::string, int> insert_info = crdt_manager.GenerateStringInsertInfoFromRemoteInsert(crdt_action);
-  std::cout << "[Remote] Inserting at local index " << std::endl;
+  std::cout << "[Remote] Inserting at local index " << insert_info.second << std::endl;
   editor_window.InsertText(insert_info.first, insert_info.second);
 }
 
