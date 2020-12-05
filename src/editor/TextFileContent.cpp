@@ -84,3 +84,11 @@ int TextFileContent::GetNumberOfCharactersInLine(int line_number) {
 int TextFileContent::GetNumberOfTotalLines() const {
   return line_positions.size();
 }
+
+void TextFileContent::InsertTextAtIndex(const std::string& text, int index) {
+  this->string_content.insert(index, text);
+}
+
+void TextFileContent::DeleteTextFromIndex(int index, int number_characters) {
+  this->string_content.erase(index, number_characters);
+}

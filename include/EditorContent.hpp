@@ -107,6 +107,10 @@ class EditorContent {
    */
   void SetEditorCallbacks(EditorCallbacks *editor_callback);
 
+  void DeleteStringFromPosition(int position, int number_chars);
+
+  void InsertTextAtPosition(std::string &text, int position);
+
   std::string GetStringContent();
   std::vector<int> &GetLinePositions();
 

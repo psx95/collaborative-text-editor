@@ -67,6 +67,10 @@ class TextFileContent {
    * @return the actual linear position (index) in the string content from which the text was removed.
    */
   int RemoveTextFromPosition(int amount, int line_number, int column_number);
+
+  void InsertTextAtIndex(const std::string& text, int index);
+
+  void DeleteTextFromIndex(int index, int number_characters);
 };
 
 #endif //COLLABORATIVE_TEXT_EDITOR_SRC_EDITOR_TEXTFILE_HPP_

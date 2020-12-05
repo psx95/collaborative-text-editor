@@ -22,16 +22,17 @@ class EditorWindow {
   InputHandler *input_handler{}; // The InputHandler object that handles the keyboard and mouse input from user.
   sf::Color background_color{}; // The background color for the RenderWindow.
 
-  void InitializeEditorWindow(); // Sets up all objects that are required prior to beginning event loop.
+  void InitializeEditorWindow(std::string &site_id); // Sets up all objects that are required prior to beginning event loop.
   void UpdateEvents(); // This method polls for any new events made by the user.
   void DrawUpdates(); // This method draws the changes which were introduced as a result of user events
 
  public:
   /*!
    * @brief Public constructor for the EditorWindow.
-   * @param background_color The background color for the window
+   * @param background_color The background color for the window.
+   * @param site_id The unique ID for the client.
    */
-  explicit EditorWindow(sf::Color background_color);
+  explicit EditorWindow(sf::Color background_color, std::string &site_id);
 
   /*!
    * @brief This method starts the main event loop that controls the program flow on the main thread.
@@ -45,12 +46,15 @@ class EditorWindow {
    */
   void CloseWindow();
 
-
   /*!
    * @brief This method is used to set EditorCallbacks for EditorContent.
    * @param editor_callbacks A pointer to the EditorCallbacks objects.
    */
   void SetEditorCallbacks(EditorCallbacks *editor_callbacks);
+
+  void InsertText(std::string &text, int index);
+
+  void DeleteTextFrom(int index, int num_chars = 1);
 
   /*!
    * @brief Custom destructor for the EditorWindow. Should be used to reclaim any manually allocated memory.
