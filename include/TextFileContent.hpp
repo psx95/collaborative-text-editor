@@ -78,9 +78,17 @@ class TextFileContent {
    * @return the actual linear position (index) in the string content at which the text was added. Ideally this should
    * the same as the one in input parameter.
    */
-  int InsertTextAtIndex(const std::string& text, int index);
-  
-  void DeleteTextFromIndex(int index, int number_characters);
+  int InsertTextAtIndex(const std::string &text, int index);
+
+  /*!
+   * @brief This method is responsible for deleting the text directly from a particular position inside the string.
+   * @details Internally, this method functions exactly the same as RemoveTextFromPosition.
+   * @param index The actual index in the string from where characters are to be deleted.
+   * @param number_characters The number of characters in the text that need to be deleted.
+   * @return the actual linear position (index) in the string content from which the text was removed. Ideally this
+   * should be the same as the one in the input parameter.
+   */
+  int DeleteTextFromIndex(int index, int number_characters);
 };
 
 #endif //COLLABORATIVE_TEXT_EDITOR_SRC_EDITOR_TEXTFILE_HPP_

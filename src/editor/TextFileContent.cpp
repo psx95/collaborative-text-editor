@@ -91,8 +91,9 @@ int TextFileContent::InsertTextAtIndex(const std::string& text, int index) {
   return TextFileContent::AddTextAtPosition(txt, cursor_position.first, cursor_position.second);
 }
 
-void TextFileContent::DeleteTextFromIndex(int index, int number_characters) {
-  this->string_content.erase(index, number_characters);
+int TextFileContent::DeleteTextFromIndex(int index, int number_characters) {
+  std::pair<int, int> cursor_position = GetCursorPositionFromStringPosition(index);
+  return TextFileContent::RemoveTextFromPosition(number_characters, cursor_position.first, cursor_position.second);
 }
 
 std::pair<int, int> TextFileContent::GetCursorPositionFromStringPosition(int position_in_string) {
