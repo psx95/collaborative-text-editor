@@ -52,15 +52,19 @@ void ApplicationController::OnLocalDelete(int index) {
 void ApplicationController::OnRemoteOperationReceive(struct CRDTAction &crdt_action,
                                                      std::string &sender_site_id,
                                                      int sender_site_counter) {
-  // check action and handle insert or delete
-  if (crdt_action.Operation() == INSERT) {
-    ApplicationController::OnRemoteInsertReceive(crdt_action, sender_site_id, sender_site_counter);
-  } else if (crdt_action.Operation() == DELETE) {
-    ApplicationController::OnRemoteDeleteReceive(crdt_action, sender_site_id, sender_site_counter);
-  } else {
-    // Dont want to throw exception since it will exit the program, ideally we would nopt want app to crash just because
-    // of a single packet.
-    std::cerr << "Unrecognized action received " << crdt_action.Operation() << std::endl;
+  std::vector<CRDTAction>
+      actions = version_vector.ProcessRemoteAction(crdt_action, sender_site_id, sender_site_counter);
+  for (CRDTAction action: actions) {
+    // check action and handle insert or delete
+    if (crdt_action.Operation() == INSERT) {
+      ApplicationController::OnRemoteInsertReceive(crdt_action, sender_site_id, sender_site_counter);
+    } else if (crdt_action.Operation() == DELETE) {
+      ApplicationController::OnRemoteDeleteReceive(crdt_action, sender_site_id, sender_site_counter);
+    } else {
+      // Dont want to throw exception since it will exit the program, ideally we would nopt want app to crash just because
+      // of a single packet.
+      std::cerr << "Unrecognized action received " << crdt_action.Operation() << std::endl;
+    }
   }
 }
 

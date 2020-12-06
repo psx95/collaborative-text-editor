@@ -14,12 +14,12 @@ int VersionInfo::GetCounter() const {
   return counter;
 }
 
-std::set<struct CRDTAction> &VersionInfo::GetDeletionBuffer() {
+std::set<struct BufferItem> &VersionInfo::GetDeletionBuffer() {
   return deletion_buffer;
 }
 
-void VersionInfo::AddToDeletionBuffer(struct CRDTAction &action) {
-  this->deletion_buffer.insert(action);
+void VersionInfo::AddToDeletionBuffer(struct BufferItem &item) {
+  this->deletion_buffer.insert(item);
 }
 
 VersionInfo::VersionInfo() {
@@ -36,4 +36,7 @@ void VersionInfo::AddToSeenCounters(int count) {
 
 bool VersionInfo::HasSeenCounter(int count) {
   return seen_counters.count(count) != 0;
+}
+void VersionInfo::SetCounter(int c) {
+  VersionInfo::counter = c;
 }

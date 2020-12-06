@@ -112,11 +112,6 @@ struct CRDTAction {
     return crdt_action_str.append("\n");
   }
 
-  // overriding < operator for std::set
-  bool operator<(const CRDTAction &msgObj) const {
-    return (this->counter < msgObj.counter);
-  }
-
  private:
   CRDTOperation operation;
   std::string site_id; // unique id of the client

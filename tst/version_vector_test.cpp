@@ -35,7 +35,7 @@ TEST_CASE("version vector processes incoming actions") {
   SECTION("insertion should apply immediately") {
     CRDTAction action(INSERT, other_site_id, 0, text, vector);
 
-    std::vector<CRDTAction> apply = version_vector.ProcessRemoteAction(action);
+    std::vector<CRDTAction> apply = version_vector.ProcessRemoteAction(action, other_site_id, 0);
     REQUIRE(apply.size() == 1);
     REQUIRE(apply.at(0).Counter() == 0);
   }
@@ -43,13 +43,13 @@ TEST_CASE("version vector processes incoming actions") {
   SECTION("out of order insertions should apply immediately") {
     CRDTAction action(INSERT, other_site_id, 1, text, vector);
 
-    std::vector<CRDTAction> apply = version_vector.ProcessRemoteAction(action);
+    std::vector<CRDTAction> apply = version_vector.ProcessRemoteAction(action, other_site_id, 1);
     REQUIRE(apply.size() == 1);
     REQUIRE(apply.at(0).Counter() == 1);
 
     action = CRDTAction(INSERT, other_site_id, 0, text, vector);
 
-    apply = version_vector.ProcessRemoteAction(action);
+    apply = version_vector.ProcessRemoteAction(action, other_site_id, 0);
     REQUIRE(apply.size() == 1);
     REQUIRE(apply.at(0).Counter() == 0);
   }
@@ -57,21 +57,36 @@ TEST_CASE("version vector processes incoming actions") {
   SECTION("deletion without pending insert should apply immediately") {
     CRDTAction action(DELETE, other_site_id, 0, text, vector);
 
-    std::vector<CRDTAction> apply = version_vector.ProcessRemoteAction(action);
+    std::vector<CRDTAction> apply = version_vector.ProcessRemoteAction(action, other_site_id, 0);
     REQUIRE(apply.size() == 1);
     REQUIRE(apply.at(0).Counter() == 0);
   }
 
-  SECTION("in-order deletions without pending insert should apply immediately") {
-    CRDTAction action(DELETE, other_site_id, 0, text, vector);
+  SECTION("insertion-deletion: both should apply immediately") {
+    CRDTAction action(INSERT, other_site_id, 0, text, vector);
 
-    std::vector<CRDTAction> apply = version_vector.ProcessRemoteAction(action);
+    std::vector<CRDTAction> apply = version_vector.ProcessRemoteAction(action, other_site_id, 0);
     REQUIRE(apply.size() == 1);
     REQUIRE(apply.at(0).Counter() == 0);
 
     action = CRDTAction(DELETE, other_site_id, 1, text, vector);
 
-    apply = version_vector.ProcessRemoteAction(action);
+    apply = version_vector.ProcessRemoteAction(action, other_site_id, 1);
+    REQUIRE(apply.size() == 1);
+    REQUIRE(apply.at(0).Counter() == 1);
+  }
+
+
+  SECTION("in-order deletions without pending insert should apply immediately") {
+    CRDTAction action(DELETE, other_site_id, 0, text, vector);
+
+    std::vector<CRDTAction> apply = version_vector.ProcessRemoteAction(action, other_site_id, 0);
+    REQUIRE(apply.size() == 1);
+    REQUIRE(apply.at(0).Counter() == 0);
+
+    action = CRDTAction(DELETE, other_site_id, 1, text, vector);
+
+    apply = version_vector.ProcessRemoteAction(action, other_site_id, 1);
     REQUIRE(apply.size() == 1);
     REQUIRE(apply.at(0).Counter() == 1);
   }
@@ -79,12 +94,12 @@ TEST_CASE("version vector processes incoming actions") {
   SECTION("out-of-order deletions without pending insert should NOT apply immediately") {
     CRDTAction action(DELETE, other_site_id, 1, text, vector);
 
-    std::vector<CRDTAction> apply = version_vector.ProcessRemoteAction(action);
+    std::vector<CRDTAction> apply = version_vector.ProcessRemoteAction(action, other_site_id, 1);
     REQUIRE(apply.empty());
 
     action = CRDTAction(DELETE, other_site_id, 0, text, vector);
 
-    apply = version_vector.ProcessRemoteAction(action);
+    apply = version_vector.ProcessRemoteAction(action, other_site_id, 0);
     REQUIRE(apply.size() == 2);
     REQUIRE(apply.at(0).Counter() == 0);
     REQUIRE(apply.at(1).Counter() == 1);
@@ -93,12 +108,12 @@ TEST_CASE("version vector processes incoming actions") {
   SECTION("deletion before insertion should go in buffer") {
     CRDTAction action(DELETE, other_site_id, 1, text, vector);
 
-    std::vector<CRDTAction> apply = version_vector.ProcessRemoteAction(action);
+    std::vector<CRDTAction> apply = version_vector.ProcessRemoteAction(action, other_site_id, 1);
     REQUIRE(apply.empty());
 
     // the pending deletion should be applied now
     action = CRDTAction(INSERT, other_site_id, 0, text, vector);
-    apply = version_vector.ProcessRemoteAction(action);
+    apply = version_vector.ProcessRemoteAction(action, other_site_id, 0);
 
     REQUIRE(apply.size() == 2);
     REQUIRE(apply.at(0).Counter() == 0);
@@ -108,17 +123,17 @@ TEST_CASE("version vector processes incoming actions") {
   SECTION("two deletions before insertion should go in buffer") {
     CRDTAction action(DELETE, other_site_id, 1, text, vector);
 
-    std::vector<CRDTAction> apply = version_vector.ProcessRemoteAction(action);
+    std::vector<CRDTAction> apply = version_vector.ProcessRemoteAction(action, other_site_id, 1);
     REQUIRE(apply.empty());
 
     action = CRDTAction(DELETE, other_site_id, 2, text, vector);
-    apply = version_vector.ProcessRemoteAction(action);
+    apply = version_vector.ProcessRemoteAction(action, other_site_id, 2);
 
     REQUIRE(apply.empty());
 
     // the pending deletion should be applied now
     action = CRDTAction(INSERT, other_site_id, 0, text, vector);
-    apply = version_vector.ProcessRemoteAction(action);
+    apply = version_vector.ProcessRemoteAction(action, other_site_id, 0);
 
     REQUIRE(apply.size() == 3);
     REQUIRE(apply.at(0).Counter() == 0);
@@ -129,23 +144,23 @@ TEST_CASE("version vector processes incoming actions") {
   SECTION("insertion before two deletions before insertion") {
     CRDTAction action(INSERT, other_site_id, 1, text, vector);
 
-    std::vector<CRDTAction> apply = version_vector.ProcessRemoteAction(action);
+    std::vector<CRDTAction> apply = version_vector.ProcessRemoteAction(action, other_site_id, 1);
     REQUIRE(apply.size() == 1);
     REQUIRE(apply.at(0).Counter() == 1);
 
     action = CRDTAction(DELETE, other_site_id, 3, text, vector);
 
-    apply = version_vector.ProcessRemoteAction(action);
+    apply = version_vector.ProcessRemoteAction(action, other_site_id, 3);
     REQUIRE(apply.empty());
 
     action = CRDTAction(DELETE, other_site_id, 2, text, vector);
-    apply = version_vector.ProcessRemoteAction(action);
+    apply = version_vector.ProcessRemoteAction(action, other_site_id, 2);
 
     REQUIRE(apply.empty());
 
     // the pending deletion should be applied now
     action = CRDTAction(INSERT, other_site_id, 0, text, vector);
-    apply = version_vector.ProcessRemoteAction(action);
+    apply = version_vector.ProcessRemoteAction(action, other_site_id, 0);
 
     REQUIRE(apply.size() == 3);
     REQUIRE(apply.at(0).Counter() == 0);
@@ -166,26 +181,26 @@ TEST_CASE("version vector ignores duplicate actions") {
   SECTION("duplicate inserts should get ignored") {
     CRDTAction action(INSERT, other_site_id, 0, text, vector);
 
-    std::vector<CRDTAction> apply = version_vector.ProcessRemoteAction(action);
+    std::vector<CRDTAction> apply = version_vector.ProcessRemoteAction(action, other_site_id, 0);
     REQUIRE(apply.size() == 1);
     REQUIRE(apply.at(0).Counter() == 0);
 
     action = CRDTAction(INSERT, other_site_id, 0, text, vector);
 
-    apply = version_vector.ProcessRemoteAction(action);
+    apply = version_vector.ProcessRemoteAction(action, other_site_id, 0);
     REQUIRE(apply.empty());
   }
 
   SECTION("duplicate deletes should get ignored") {
     CRDTAction action(DELETE, other_site_id, 0, text, vector);
 
-    std::vector<CRDTAction> apply = version_vector.ProcessRemoteAction(action);
+    std::vector<CRDTAction> apply = version_vector.ProcessRemoteAction(action, other_site_id, 0);
     REQUIRE(apply.size() == 1);
     REQUIRE(apply.at(0).Counter() == 0);
 
     action = CRDTAction(DELETE, other_site_id, 0, text, vector);
 
-    apply = version_vector.ProcessRemoteAction(action);
+    apply = version_vector.ProcessRemoteAction(action, other_site_id, 0);
     REQUIRE(apply.empty());
   }
 }

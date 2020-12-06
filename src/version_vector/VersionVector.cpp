@@ -8,29 +8,38 @@ VersionVector::VersionVector(std::string &site_id) : site_id(site_id) {
   CreateMapEntry(site_id);
 }
 
-std::vector<CRDTAction> VersionVector::ProcessRemoteAction(CRDTAction &action) {
+std::vector<CRDTAction> VersionVector::ProcessRemoteAction(CRDTAction &action, std::string &s_id, int site_version) {
   std::vector<CRDTAction> actions;
   std::string id = action.SiteId();
 
+  UpdateCurrentMap();
   CreateMapEntry(id);
+  CreateMapEntry(s_id);
 
   VersionInfo &info = this->versions[id];
 
-  if (info.HasSeenCounter(action.Counter())) {
+  if (versions[s_id].HasSeenCounter(site_version)) {
     return actions;
   } else {
-    info.AddToSeenCounters(action.Counter());
+    versions[s_id].AddToSeenCounters(site_version);
   }
 
   if (action.Operation() == INSERT) {
     actions.push_back(action);
     info.IncrementCounterBy(1);
   } else {
-    info.AddToDeletionBuffer(action);
+    BufferItem buffer_item{
+        .site_id =  s_id,
+        .site_counter = site_version,
+        .character = action
+    };
+    info.AddToDeletionBuffer(buffer_item);
   }
 
-  std::vector<CRDTAction> bufferOP = this->ProcessDeletionBuffer(info);
-  actions.insert(actions.end(), bufferOP.begin(), bufferOP.end());
+  for (auto &version : versions) {
+    std::vector<CRDTAction> bufferOP = this->ProcessDeletionBuffer(version.second);
+    actions.insert(actions.end(), bufferOP.begin(), bufferOP.end());
+  }
 
   return actions;
 }
@@ -54,9 +63,9 @@ std::vector<CRDTAction> VersionVector::ProcessDeletionBuffer(VersionInfo &versio
   std::vector<CRDTAction> ready_to_go;
 
   for (auto it = version_info.GetDeletionBuffer().begin(); it != version_info.GetDeletionBuffer().end();) {
-    if (it->Counter() <= version_info.GetCounter()) {
-      ready_to_go.push_back(*it);
-      version_info.IncrementCounterBy(1);
+    if (it->character.Counter() <= version_info.GetCounter()) {
+      ready_to_go.push_back(it->character);
+      versions[it->site_id].IncrementCounterBy(1);
       it = version_info.GetDeletionBuffer().erase(it);
     } else {
       ++it;
@@ -64,6 +73,9 @@ std::vector<CRDTAction> VersionVector::ProcessDeletionBuffer(VersionInfo &versio
   }
 
   return ready_to_go;
+}
+void VersionVector::UpdateCurrentMap() {
+  this->versions[site_id].SetCounter(GetSiteCounter());
 }
 
 

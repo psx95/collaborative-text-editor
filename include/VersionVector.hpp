@@ -20,6 +20,7 @@ class VersionVector {
   int site_counter = -1;
   std::map<std::string, VersionInfo> versions;
   void CreateMapEntry(std::string &id);
+  void UpdateCurrentMap();
   std::vector<CRDTAction> ProcessDeletionBuffer(VersionInfo &version_info);
 
  public:
@@ -34,7 +35,7 @@ class VersionVector {
    * @param Action to be processed.
    * @return List of all actions that are ready to be applied.
    */
-  std::vector<CRDTAction> ProcessRemoteAction(CRDTAction &action);
+  std::vector<CRDTAction> ProcessRemoteAction(CRDTAction &action, std::string &site_id, int site_version);
 
   /*!
    * @brief Increment the site counter of this client. Should be called before a local operation is broadcast.
