@@ -93,3 +93,74 @@ TEST_CASE("Local insert = Remote Insert single line") {
   std::cout << "text is  " << text_file_content_remote.GetLine(0).toAnsiString() << std::endl;
   REQUIRE(text_file_content.GetLine(0) == text_file_content_remote.GetLine(0));
 }
+
+TEST_CASE("Local Delete = Remote Delete single line") {
+  TextFileContent text_file_content;
+  sf::String txt = "Dummy String for test";
+  InsertTextCharacterByCharacter(txt, text_file_content);
+  REQUIRE(text_file_content.GetNumberOfTotalLines() == 1);
+  REQUIRE(text_file_content.GetNumberOfCharactersInLine(0) == txt.getSize());
+  REQUIRE(text_file_content.GetLine(0) == txt);
+
+  // remote insert in another peer
+  TextFileContent text_file_content_remote;
+  RemoteInsertCharacterByCharacter(txt, text_file_content_remote);
+  REQUIRE(text_file_content.GetNumberOfTotalLines() == text_file_content_remote.GetNumberOfTotalLines());
+  REQUIRE(text_file_content.GetLine(0) == text_file_content_remote.GetLine(0));
+
+  // Delete as a local op
+  // deleting locally from row 0 column 0 is not possible
+  int deleted_position = text_file_content.RemoveTextFromPosition(1, 0, 2); // should delete 'u'
+  REQUIRE(deleted_position == 1);
+  sf::String expected_txt = "Dmmy String for test";
+  REQUIRE(text_file_content.GetNumberOfTotalLines() == 1);
+  REQUIRE(text_file_content.GetNumberOfCharactersInLine(0) == expected_txt.getSize());
+  std::cout << "deleted text is " << text_file_content.GetLine(0).toAnsiString() << std::endl;
+  REQUIRE(text_file_content.GetLine(0) == expected_txt);
+
+  // Delete as a remote op
+  int remote_delete_start_index = text_file_content_remote.DeleteTextFromIndex(1, 1);
+  REQUIRE(remote_delete_start_index == 1);
+  REQUIRE(text_file_content_remote.GetNumberOfTotalLines() == text_file_content.GetNumberOfTotalLines());
+  REQUIRE(text_file_content_remote.GetNumberOfCharactersInLine(0) == text_file_content.GetNumberOfCharactersInLine(0));
+  REQUIRE(text_file_content_remote.GetLine(0) == text_file_content.GetLine(0));
+}
+
+TEST_CASE("Local Delete = Remote Delete multi-line") {
+  TextFileContent text_file_content;
+  sf::String txt = "Dummy String for \ntest";
+  InsertTextCharacterByCharacter(txt, text_file_content);
+  REQUIRE(text_file_content.GetNumberOfTotalLines() == 2);
+  REQUIRE(text_file_content.GetNumberOfCharactersInLine(0) + text_file_content.GetNumberOfCharactersInLine(1)
+              == txt.getSize() - 1);
+  REQUIRE(text_file_content.GetLine(0) == txt.substring(0, txt.find("\n")));
+
+  // remote insert in peer
+  TextFileContent text_file_content_remote;
+  RemoteInsertCharacterByCharacter(txt, text_file_content_remote);
+  REQUIRE(text_file_content.GetNumberOfTotalLines() == text_file_content_remote.GetNumberOfTotalLines());
+  std::cout << "text is  " << text_file_content_remote.GetLine(0).toAnsiString() << std::endl;
+  std::cout << "text is  " << text_file_content_remote.GetLine(1).toAnsiString() << std::endl;
+  REQUIRE(text_file_content.GetLine(0) == text_file_content_remote.GetLine(0));
+  REQUIRE(text_file_content.GetLine(1) == text_file_content_remote.GetLine(1));
+
+  // delete as a local op
+  // new line character is stored at the start of the current line
+  int deleted_position = text_file_content.RemoveTextFromPosition(1, 1, 1); // should delete 'u'
+  REQUIRE(deleted_position == 18);
+  sf::String expected_txt = "Dummy String for \nest";
+  REQUIRE(text_file_content.GetNumberOfTotalLines() == 2);
+  REQUIRE(text_file_content.GetNumberOfCharactersInLine(0) + text_file_content.GetNumberOfCharactersInLine(1)
+              == expected_txt.getSize() - 1); // new line not included in character count
+  std::cout << "deleted text is " << text_file_content.GetLine(0).toAnsiString() << std::endl;
+  REQUIRE(text_file_content.GetLine(0) == expected_txt.substring(0, expected_txt.find("\n")));
+  REQUIRE(text_file_content.GetLine(1) == expected_txt.substring(expected_txt.find("\n") + 1));
+
+  // remote delete
+  int remote_delete_start_index = text_file_content_remote.DeleteTextFromIndex(18, 1);
+  REQUIRE(remote_delete_start_index == 18);
+  REQUIRE(text_file_content_remote.GetNumberOfTotalLines() == text_file_content.GetNumberOfTotalLines());
+  REQUIRE(text_file_content_remote.GetNumberOfCharactersInLine(0) == text_file_content.GetNumberOfCharactersInLine(0));
+  REQUIRE(text_file_content_remote.GetLine(0) == text_file_content.GetLine(0));
+  REQUIRE(text_file_content_remote.GetLine(1) == text_file_content.GetLine(1));
+}
