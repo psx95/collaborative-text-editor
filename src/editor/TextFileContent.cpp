@@ -85,10 +85,28 @@ int TextFileContent::GetNumberOfTotalLines() const {
   return line_positions.size();
 }
 
-void TextFileContent::InsertTextAtIndex(const std::string& text, int index) {
-  this->string_content.insert(index, text);
+int TextFileContent::InsertTextAtIndex(const std::string& text, int index) {
+  std::pair<int, int> cursor_position = GetCursorPositionFromStringPosition(index);
+  sf::String txt = text;
+  return TextFileContent::AddTextAtPosition(txt, cursor_position.first, cursor_position.second);
 }
 
 void TextFileContent::DeleteTextFromIndex(int index, int number_characters) {
   this->string_content.erase(index, number_characters);
+}
+
+std::pair<int, int> TextFileContent::GetCursorPositionFromStringPosition(int position_in_string) {
+  // find highest line number position which comes right after the position
+  int line_number = 0;
+  int new_line_index = 0;
+  for (int i = 0; i < line_positions.size(); i++) {
+    if (position_in_string >= line_positions.at(i)) {
+      line_number = i;
+      new_line_index = line_positions.at(i); // index stored at new line position
+    } else {
+      break;
+    }
+  }
+  int column_number = position_in_string - new_line_index;
+  return {line_number, column_number};
 }

@@ -19,7 +19,9 @@ class TextFileContent {
   sf::String string_content;
   std::vector<int> line_positions{};
 
+  // the two methods below convert cursor position to string position and vice-versa
   int GetStringPositionFromCursorPosition(int line_number, int column_number);
+  std::pair<int, int> GetCursorPositionFromStringPosition(int position_in_string);
 
  public:
   /*!
@@ -68,8 +70,16 @@ class TextFileContent {
    */
   int RemoveTextFromPosition(int amount, int line_number, int column_number);
 
-  void InsertTextAtIndex(const std::string& text, int index);
-
+  /*!
+   * @brief This method is responsible for adding text directly at a particular position inside the string.
+   * @details Internally, this method functions exactly the same as AddTextAtPosition.
+   * @param text The text to be inserted at a particular position.
+   * @param index The actual index in the string where this text needs to be inserted.
+   * @return the actual linear position (index) in the string content at which the text was added. Ideally this should
+   * the same as the one in input parameter.
+   */
+  int InsertTextAtIndex(const std::string& text, int index);
+  
   void DeleteTextFromIndex(int index, int number_characters);
 };
 
