@@ -45,7 +45,8 @@ void UDPClient::HandleOutgoingPacket(sf::Packet packet, PeerAddress peer_address
   }
 }
 
-void UDPClient::BroadcastActionToAllConnectedPeers(CRDTAction &crdt_action) {
+void UDPClient::BroadcastActionToAllConnectedPeers(CRDTAction &crdt_action, std::string &site_id, int site_counter) {
+  // TODO: Add site id and site counter to packet
   sf::Packet packet;
   packet << crdt_action.Operation() << crdt_action.SiteId() << crdt_action.Counter() << crdt_action.Text() <<
          (int) crdt_action.Positions().size();
@@ -77,7 +78,9 @@ void UDPClient::HandleIncomingPacket(sf::Packet &packet) {
   }
   CRDTAction crdt_action((CRDTOperation) operation, site_id, counter, text, positions);
   std::cout << crdt_action.ToString();
-  client_callbacks->OnRemoteOperationReceive(crdt_action);
+  // TODO: fix parsing - extract site id & site counter for sender and pass it
+  std::string dummy_id = "dummy site id";
+  client_callbacks->OnRemoteOperationReceive(crdt_action, dummy_id, 0);
 }
 
 void UDPClient::ShutdownClient() {

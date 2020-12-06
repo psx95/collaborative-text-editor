@@ -36,8 +36,10 @@ class UDPClient {
   /*!
    * @brief This method will broadcast a single packet (should contain a single Operation) to all connected clients.
    * @param crdt_action The CRDTAction that needs to be reflected on all connected peers.
+   * @param site_id The site ID of this (broadcasting) client.
+   * @param site_counter The site counter of this (broadcasting) client.
    */
-  void BroadcastActionToAllConnectedPeers(struct CRDTAction &crdt_action);
+  void BroadcastActionToAllConnectedPeers(struct CRDTAction &crdt_action, std::string &site_id, int site_counter);
 
   /*!
    * @brief This method sets the NetworkingCallbacks for the UpdClient.

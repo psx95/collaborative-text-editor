@@ -51,13 +51,19 @@ enum CRDTAllocationStrategy {
 struct CRDTAction {
  public:
   CRDTAction(CRDTOperation operation,
-             std::string &site_id,
-             int counter,
+             std::string &site_id, // site_id of the client that is responsible for originally creating the operation.
+             int counter, // site counter of the client that is responsible for originally creating the operation.
              std::string &text,
              std::vector<long> &positions)
       : operation(operation), site_id(site_id), counter(counter), text(text), positions(positions) {
   }
 
+  /*!
+   * @brief Public constructor for CRDTAction.
+   * @details This is a simplified constructor that gives an overall picture of the CRDTAction.
+   * @param operation The operation that needs to be performed with the character.
+   * @param character The CRDTCharacter on which the operation needs to be performed.
+   */
   CRDTAction(CRDTOperation operation, CRDTCharacter &character) : operation(operation) {
     site_id = character.GetSiteId();
     counter = character.GetCounter();

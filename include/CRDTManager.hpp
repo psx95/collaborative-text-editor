@@ -110,6 +110,12 @@ class CRDTManager {
    */
   std::vector<CRDTCharacter> *GetCRDTCharacters() const;
 
+  /*!
+   * @brief Getter for the current Site ID.
+   * @return The site ID (A UUID) for the this peer.
+   */
+  std::string &GetSiteId() const;
+
   ~CRDTManager();
 };
 

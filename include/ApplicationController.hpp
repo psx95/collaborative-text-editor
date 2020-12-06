@@ -20,9 +20,9 @@ class ApplicationController : public EditorCallbacks, public NetworkingCallbacks
 
   void Init();
 
-  void OnRemoteInsertReceive(struct CRDTAction &crdt_action);
+  void OnRemoteInsertReceive(struct CRDTAction &crdt_action, std::string &sender_site_id, int sender_site_counter);
 
-  void OnRemoteDeleteReceive(struct CRDTAction &crdt_action);
+  void OnRemoteDeleteReceive(struct CRDTAction &crdt_action, std::string &sender_site_id, int sender_site_counter);
 
  public:
   explicit ApplicationController(EditorWindow &editor, CRDTManager &crdt, UDPClient &client, VersionVector &vector);
@@ -35,7 +35,9 @@ class ApplicationController : public EditorCallbacks, public NetworkingCallbacks
 
   void OnLocalDelete(int index) override;
 
-  void OnRemoteOperationReceive(struct CRDTAction &crdt_action) override;
+  void OnRemoteOperationReceive(struct CRDTAction &crdt_action,
+                                std::string &sender_site_id,
+                                int sender_site_counter) override;
 };
 
 #endif //COLLABORATIVE_TEXT_EDITOR_SRC_APPLICATIONCONTROLLER_HPP_

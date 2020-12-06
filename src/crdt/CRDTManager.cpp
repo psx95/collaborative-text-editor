@@ -45,6 +45,10 @@ std::vector<CRDTCharacter> *CRDTManager::GetCRDTCharacters() const {
   return this->characters;
 }
 
+std::string &CRDTManager::GetSiteId() const {
+  return site_id;
+}
+
 //================================================================================
 // Private Helpers
 //================================================================================
