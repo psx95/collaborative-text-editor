@@ -10,6 +10,10 @@ VersionVector::VersionVector(std::string &site_id) : site_id(site_id) {
 
 std::vector<CRDTAction> VersionVector::ProcessRemoteAction(CRDTAction &action, std::string &s_id, int site_version) {
   std::vector<CRDTAction> actions;
+  if (s_id == this->site_id) {
+    return actions;
+  }
+
   std::string id = action.SiteId();
 
   UpdateCurrentMap();

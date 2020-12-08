@@ -56,15 +56,17 @@ void ApplicationController::OnRemoteOperationReceive(struct CRDTAction &crdt_act
       actions = version_vector.ProcessRemoteAction(crdt_action, sender_site_id, sender_site_counter);
   for (CRDTAction action: actions) {
     // check action and handle insert or delete
-    if (crdt_action.Operation() == INSERT) {
-      ApplicationController::OnRemoteInsertReceive(crdt_action, sender_site_id, sender_site_counter);
-    } else if (crdt_action.Operation() == DELETE) {
-      ApplicationController::OnRemoteDeleteReceive(crdt_action, sender_site_id, sender_site_counter);
+    if (action.Operation() == INSERT) {
+      ApplicationController::OnRemoteInsertReceive(action, sender_site_id, sender_site_counter);
+    } else if (action.Operation() == DELETE) {
+      ApplicationController::OnRemoteDeleteReceive(action, sender_site_id, sender_site_counter);
     } else {
-      // Dont want to throw exception since it will exit the program, ideally we would nopt want app to crash just because
+      // Don't want to throw exception since it will exit the program, ideally we would not want app to crash just because
       // of a single packet.
-      std::cerr << "Unrecognized action received " << crdt_action.Operation() << std::endl;
+      std::cerr << "Unrecognized action received " << action.Operation() << std::endl;
+      return;
     }
+    udp_client.BroadcastActionToAllConnectedPeers(action, sender_site_id, sender_site_counter);
   }
 }
 
