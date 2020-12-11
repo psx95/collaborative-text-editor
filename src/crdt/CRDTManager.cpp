@@ -37,7 +37,9 @@ std::pair<std::string, int> CRDTManager::GenerateStringInsertInfoFromRemoteInser
 
 int CRDTManager::GenerateDeleteInfoFromRemoteDelete(CRDTAction &remote_action) {
   int remote_delete_position = (int) this->FindRemoteDeletePosition(remote_action.Character());
-  this->characters->erase(this->characters->begin() + remote_delete_position);
+  if (remote_delete_position >= 0) {
+    this->characters->erase(this->characters->begin() + remote_delete_position);
+  }
   return remote_delete_position;
 }
 
@@ -216,7 +218,9 @@ int CRDTManager::FindRemoteDeletePosition(CRDTCharacter remote_character) {
   }
   std::string error_message = "Character to delete not present in CRDT!";
   error_message.append(remote_character.ToString());
-  throw CustomMessageException(error_message);
+  //throw CustomMessageException(error_message);
+  std::cerr << error_message << std::endl;
+  return -1;
 }
 
 //================================================================================

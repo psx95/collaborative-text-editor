@@ -75,7 +75,7 @@ void ApplicationController::OnRemoteInsertReceive(struct CRDTAction &crdt_action
                                                   int sender_site_counter) {
   std::cout << "Networking Callback: remote insert packet received from client " << sender_site_id << std::endl;
   std::pair<std::string, int> insert_info = crdt_manager.GenerateStringInsertInfoFromRemoteInsert(crdt_action);
-  std::cout << "[Remote] Inserting at local index " << insert_info.second << std::endl;
+  std::cout << "[Remote] Inserting at local index " << insert_info.second << ", " << insert_info.first << std::endl;
   editor_window.InsertText(insert_info.first, insert_info.second);
 }
 
@@ -85,5 +85,7 @@ void ApplicationController::OnRemoteDeleteReceive(struct CRDTAction &crdt_action
   std::cout << "Networking Callback: remote delete packet received from client " << sender_site_id << std::endl;
   int index = crdt_manager.GenerateDeleteInfoFromRemoteDelete(crdt_action);
   std::cout << "[Remote] Deleting from local index " << index << std::endl;
-  editor_window.DeleteTextFrom(index);
+  if (index >= 0) {
+    editor_window.DeleteTextFrom(index);
+  }
 }
