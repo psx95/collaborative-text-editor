@@ -11,8 +11,6 @@
 std::string generateUniqueId();
 
 int main(int argc, char **argv) {
-  std::cout << "Starting Application" << std::endl;
-
   if (argc < 3 || argc != (3 + 2 * strtoul(argv[2], nullptr, 10))) {
     std::cerr
         << "Error: Not enough or invalid arguments, please enter in this format ./collaborative_text_editor "
