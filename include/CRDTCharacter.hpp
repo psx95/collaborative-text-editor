@@ -65,6 +65,12 @@ class CRDTCharacter {
    * other_character, -1 if the current character should appear before the other_character.
    */
   int ComparePositionTo(CRDTCharacter &other_character);
+
+  /*!
+   * @brief A method to get the string representation of the CRDTCharacter object.
+   * @return A string displaying all member variables for the object in human-readable form.
+   */
+  std::string ToString();
 };
 
 #endif //COLLABORATIVE_TEXT_EDITOR_SRC_CRDT_CRDTCHARACTER_HPP_

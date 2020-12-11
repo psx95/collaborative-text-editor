@@ -114,3 +114,11 @@ int EditorContent::GetNumberOfCharactersAtLine(int line_number) const {
 void EditorContent::SetEditorCallbacks(EditorCallbacks *editor_callback) {
   this->callbacks = editor_callback;
 }
+
+void EditorContent::DeleteStringFromPosition(int position, int number_chars) {
+  this->text_document.DeleteTextFromIndex(position, number_chars);
+}
+
+void EditorContent::InsertTextAtPosition(std::string &text, int position) {
+  this->text_document.InsertTextAtIndex(text, position);
+}

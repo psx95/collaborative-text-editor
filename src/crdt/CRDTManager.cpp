@@ -37,12 +37,18 @@ std::pair<std::string, int> CRDTManager::GenerateStringInsertInfoFromRemoteInser
 
 int CRDTManager::GenerateDeleteInfoFromRemoteDelete(CRDTAction &remote_action) {
   int remote_delete_position = (int) this->FindRemoteDeletePosition(remote_action.Character());
-  this->characters->erase(this->characters->begin() + remote_delete_position);
+  if (remote_delete_position >= 0) {
+    this->characters->erase(this->characters->begin() + remote_delete_position);
+  }
   return remote_delete_position;
 }
 
 std::vector<CRDTCharacter> *CRDTManager::GetCRDTCharacters() const {
   return this->characters;
+}
+
+std::string &CRDTManager::GetSiteId() const {
+  return site_id;
 }
 
 //================================================================================
@@ -167,7 +173,7 @@ int CRDTManager::FindRemoteInsertPosition(CRDTCharacter remote_character) {
   }
   // if the character to be inserted is at the last position
   if (remote_character.ComparePositionTo(this->characters->at(end)) > 0) {
-    return end;
+    return this->characters->size();
   }
   // run binary search to find the correct insert position, much like in the TextFileContent.
   while ((start + 1) < end) {
@@ -210,7 +216,11 @@ int CRDTManager::FindRemoteDeletePosition(CRDTCharacter remote_character) {
   if (remote_character.ComparePositionTo(this->characters->at(end)) == 0) {
     return end;
   }
-  throw CustomMessageException("Character to delete not present in CRDT!");
+  std::string error_message = "Character to delete not present in CRDT!";
+  error_message.append(remote_character.ToString());
+  //throw CustomMessageException(error_message);
+  std::cerr << error_message << std::endl;
+  return -1;
 }
 
 //================================================================================

@@ -5,13 +5,14 @@
 #include <iostream>
 #include <CustomMessageException.hpp>
 #include "EditorWindow.hpp"
-EditorWindow::EditorWindow(sf::Color background_color) {
-  InitializeEditorWindow();
+EditorWindow::EditorWindow(sf::Color background_color, std::string &site_id) {
+  InitializeEditorWindow(site_id);
   this->background_color = background_color;
 }
 
-void EditorWindow::InitializeEditorWindow() {
-  editor_window = new sf::RenderWindow(sf::VideoMode(1080, 720), "Co-Text", sf::Style::Default);
+void EditorWindow::InitializeEditorWindow(std::string &site_id) {
+  std::string title = "Co-Text Client: ";
+  editor_window = new sf::RenderWindow(sf::VideoMode(1080, 720), title.append(site_id), sf::Style::Default);
   editor_window->setVerticalSyncEnabled(true);
   editor_window->clear(background_color);
 
@@ -61,6 +62,14 @@ void EditorWindow::SetEditorCallbacks(EditorCallbacks *editor_callbacks) {
     throw CustomMessageException("EditorCallbacks cannot be set as null!");
   }
   editor_content->SetEditorCallbacks(editor_callbacks);
+}
+
+void EditorWindow::InsertText(std::string &text, int index) {
+  editor_content->InsertTextAtPosition(text, index);
+}
+
+void EditorWindow::DeleteTextFrom(int index, int num_chars) {
+  editor_content->DeleteStringFromPosition(index, num_chars);
 }
 
 EditorWindow::~EditorWindow() {

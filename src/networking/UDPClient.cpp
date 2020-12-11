@@ -45,7 +45,7 @@ void UDPClient::HandleOutgoingPacket(sf::Packet packet, PeerAddress peer_address
   }
 }
 
-void UDPClient::BroadcastActionToAllConnectedPeers(CRDTAction &crdt_action) {
+void UDPClient::BroadcastActionToAllConnectedPeers(CRDTAction &crdt_action, std::string &site_id, int site_counter) {
   sf::Packet packet;
   packet << crdt_action.Operation() << crdt_action.SiteId() << crdt_action.Counter() << crdt_action.Text() <<
          (int) crdt_action.Positions().size();
@@ -53,6 +53,7 @@ void UDPClient::BroadcastActionToAllConnectedPeers(CRDTAction &crdt_action) {
   for (long position:crdt_action.Positions()) {
     packet << (sf::Int64) position;
   }
+  packet << site_id << site_counter;
 
   for (PeerAddress peer_address: this->peer_addresses) {
     std::thread handleOutgoingPacketThread(&UDPClient::HandleOutgoingPacket, this, packet, peer_address);
@@ -62,11 +63,13 @@ void UDPClient::BroadcastActionToAllConnectedPeers(CRDTAction &crdt_action) {
 
 void UDPClient::HandleIncomingPacket(sf::Packet &packet) {
   int operation;
-  std::string site_id;
-  int counter;
+  std::string site_id; // site id for the peer that created this operation
+  int counter; // site counter of the peer that created this operation
   std::string text;
   int positions_size;
   std::vector<long> positions;
+  std::string sender_site_id; // site id for the peer that sent this operation
+  int sender_counter; // site counter for the peer that sent this operation.
 
   packet >> operation >> site_id >> counter >> text >> positions_size;
 
@@ -75,9 +78,10 @@ void UDPClient::HandleIncomingPacket(sf::Packet &packet) {
     packet >> position;
     positions.push_back((long) position);
   }
+  packet >> sender_site_id >> sender_counter;
   CRDTAction crdt_action((CRDTOperation) operation, site_id, counter, text, positions);
   std::cout << crdt_action.ToString();
-  client_callbacks->OnRemoteOperationReceive(crdt_action);
+  client_callbacks->OnRemoteOperationReceive(crdt_action, sender_site_id, sender_counter);
 }
 
 void UDPClient::ShutdownClient() {

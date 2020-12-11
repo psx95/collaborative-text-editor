@@ -4,10 +4,7 @@
 
 #include "CustomMessageException.hpp"
 
-CustomMessageException::CustomMessageException(const std::string &message) {
-  CustomMessageException::message = &message;
-}
+#include <utility>
 
-const char *CustomMessageException::what() const noexcept {
-  return message->c_str();
+CustomMessageException::CustomMessageException(std::string message) : message(std::move(message)) {
 }

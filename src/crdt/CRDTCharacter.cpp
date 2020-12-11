@@ -45,3 +45,13 @@ int CRDTCharacter::ComparePositionTo(CRDTCharacter &other_character) {
   }
   return 0;
 }
+
+std::string CRDTCharacter::ToString() {
+  std::string crdt("\nCRDT Character:");
+  crdt.append("\nValue: ").append(std::to_string(this->value))
+      .append("\nPositions: ");
+  for (long position : this->positions) {
+    crdt.append(std::to_string(position)).append(", ");
+  }
+  return crdt;
+}
