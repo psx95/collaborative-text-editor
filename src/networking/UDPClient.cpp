@@ -80,7 +80,7 @@ void UDPClient::HandleIncomingPacket(sf::Packet &packet) {
   }
   packet >> sender_site_id >> sender_counter;
   CRDTAction crdt_action((CRDTOperation) operation, site_id, counter, text, positions);
-  std::cout << crdt_action.ToString();
+  //std::cout << crdt_action.ToString();
   client_callbacks->OnRemoteOperationReceive(crdt_action, sender_site_id, sender_counter);
 }
 

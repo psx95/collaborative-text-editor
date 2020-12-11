@@ -28,6 +28,9 @@ sf::String TextFileContent::GetLine(int line_number) {
 
 int TextFileContent::AddTextAtPosition(sf::String &text, int line_number, int column_number) {
   int text_insert_position = GetStringPositionFromCursorPosition(line_number, column_number);
+  if (text_insert_position == -1 || text_insert_position > this->string_content.getSize()) {
+    return -1;
+  }
   this->string_content.insert(text_insert_position, text);
 
   int number_of_lines = this->line_positions.size();
@@ -51,8 +54,15 @@ int TextFileContent::AddTextAtPosition(sf::String &text, int line_number, int co
 
 int TextFileContent::RemoveTextFromPosition(int amount, int line_number, int column_number) {
   int cursor_current_position = GetStringPositionFromCursorPosition(line_number, column_number);
-  int text_delete_start_position = std::max(0, cursor_current_position - amount);
-  this->string_content.erase(text_delete_start_position, amount);
+  int text_delete_start_position = -1;
+  if (cursor_current_position >= 0) {
+    text_delete_start_position = std::max(0, cursor_current_position - amount);
+    if (text_delete_start_position < string_content.getSize()) {
+      this->string_content.erase(text_delete_start_position, amount);
+    } else {
+      text_delete_start_position = -1;
+    }
+  }
   // update line positions
   this->line_positions.clear();
   this->line_positions.push_back(0);
@@ -67,6 +77,7 @@ int TextFileContent::RemoveTextFromPosition(int amount, int line_number, int col
 int TextFileContent::GetStringPositionFromCursorPosition(int line_number, int column_number) {
   if (line_number >= this->line_positions.size()) {
     std::cerr << " Unable to resolve Cursor Position to string position " << std::endl;
+    return -1;
   }
   return this->line_positions.at(line_number) + column_number;
 }

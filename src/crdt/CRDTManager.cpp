@@ -196,7 +196,8 @@ int CRDTManager::FindRemoteDeletePosition(CRDTCharacter remote_character) {
   int start = 0;
   int end = (int) this->characters->size() - 1;
   if (this->characters->empty()) {
-    throw CustomMessageException("Character to delete not present in CRDT. CRDT empty!");
+    std::cerr << "Character to delete not present in CRDT. CRDT empty!" << std::endl;
+    return -1;
   }
   while ((start + 1) < end) {
     int mid = std::floor(start + (end - start) / 2);

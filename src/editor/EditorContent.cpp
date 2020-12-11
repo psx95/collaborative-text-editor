@@ -16,6 +16,9 @@ void EditorContent::InsertStringAtCursor(sf::String txt) {
   int line_number = this->cursor.GetLineNumber();
   int column_number = this->cursor.GetColumnNumber();
   int inserted_position = this->text_document.AddTextAtPosition(txt, line_number, column_number);
+  if (inserted_position < 0) {
+    return;
+  }
   for (int i = 0; i < txt.getSize(); i++) {
     this->MoveCursorRight();
   }
@@ -29,6 +32,9 @@ void EditorContent::DeleteCharacterFromCursorPosition(int number_of_characters) 
     return;
   }
   int deleted_position = this->text_document.RemoveTextFromPosition(number_of_characters, line_number, column_number);
+  if (deleted_position < 0) {
+    return;
+  }
   for (int i = 0; i < number_of_characters; i++) {
     this->MoveCursorLeft();
   }
