@@ -50,6 +50,9 @@ std::vector<int> &EditorContent::GetLinePositions() {
 }
 
 void EditorContent::MoveCursorRight() {
+  if (this->cursor.GetLineNumber() >= this->text_document.GetNumberOfTotalLines()) {
+    return;
+  }
   int characters_in_current_line = this->text_document.GetNumberOfCharactersInLine(this->cursor.GetLineNumber());
   if (this->cursor.GetColumnNumber() >= characters_in_current_line) {
     int new_cursor_line = std::min(this->cursor.GetLineNumber() + 1, this->text_document.GetNumberOfTotalLines() - 1);
@@ -63,6 +66,17 @@ void EditorContent::MoveCursorRight() {
 }
 
 void EditorContent::MoveCursorLeft() {
+  if (this->cursor.GetLineNumber() >= this->text_document.GetNumberOfTotalLines()) {
+    int number_characters_in_last_line =
+        this->text_document.GetNumberOfCharactersInLine(this->text_document.GetNumberOfTotalLines() - 1);
+    this->cursor.MoveCursorToPosition(number_characters_in_last_line, this->text_document.GetNumberOfTotalLines() - 1);
+    return;
+  }
+  if (this->cursor.GetColumnNumber() > this->text_document.GetNumberOfCharactersInLine(this->cursor.GetLineNumber())) {
+    this->cursor.MoveCursorToPosition(this->text_document.GetNumberOfCharactersInLine(this->cursor.GetLineNumber()),
+                                      this->cursor.GetLineNumber());
+    return;
+  }
   if (this->cursor.GetColumnNumber() == 0) {
     int new_cursor_line = std::max(this->cursor.GetLineNumber() - 1, 0);
     if (new_cursor_line != cursor.GetLineNumber()) {
@@ -75,6 +89,13 @@ void EditorContent::MoveCursorLeft() {
 }
 
 void EditorContent::MoveCursorUp() {
+  // if the cursor is at a invalid line (line that no longer exist)
+  if (this->cursor.GetLineNumber() >= this->text_document.GetNumberOfTotalLines()) {
+    int number_characters_in_last_line =
+        this->text_document.GetNumberOfCharactersInLine(this->text_document.GetNumberOfTotalLines() - 1);
+    this->cursor.MoveCursorToPosition(number_characters_in_last_line, this->text_document.GetNumberOfTotalLines() - 1);
+    return;
+  }
   if (this->cursor.GetLineNumber() > 0) {
     int number_characters_in_prev_line =
         this->text_document.GetNumberOfCharactersInLine(this->cursor.GetLineNumber() - 1);
