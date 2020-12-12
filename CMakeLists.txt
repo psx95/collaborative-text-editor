@@ -8,7 +8,8 @@ SET(SOURCE src/editor/EditorWindow.cpp src/editor/Cursor.cpp src/editor/EditorCo
 # header files in the project, third party headers not included
 SET(HEADERS include/EditorWindow.hpp include/Cursor.hpp include/EditorContent.hpp include/EditorView.hpp include/InputHandler.hpp include/StringUtils.hpp include/TextFileContent.hpp include/ApplicationController.hpp include/EditorCallbacks.hpp include/CustomMessageException.hpp include/CRDTManager.hpp include/CommonStructs.hpp include/NetworkingCallbacks.hpp include/UDPClient.hpp include/VersionVector.hpp include/VersionInfo.hpp include/CRDTCharacter.hpp)
 # test source files in the project
-SET(TEST_SOURCE tst/crdt_action_test.cpp tst/crdt_manager_test.cpp tst/text_file_content_test.cpp tst/version_vector_test.cpp)
+SET(TEST_SOURCE tst/crdt_action_test.cpp tst/crdt_manager_test.cpp tst/text_file_content_test.cpp tst/version_vector_test.cpp tst/mock_models/UDPClientMock.cpp tst/udp_client_test.cpp)
+
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     message(STATUS "BUILDING FOR ${CMAKE_SYSTEM}")
