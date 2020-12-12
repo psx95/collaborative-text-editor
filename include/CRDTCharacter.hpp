@@ -19,7 +19,7 @@ class CRDTCharacter {
   int counter{}; // the current site counter, from the version vector
   std::string site_id; // the site id of the node that generated this character
   // the positions array that can be used to determine the globally unique location of the current object
-  std::vector<long> positions;
+  std::vector<std::pair<long, std::string>> positions;
 
   CRDTCharacter() = default; // the default constructor cannot be used by external classes
 
@@ -31,7 +31,7 @@ class CRDTCharacter {
    * @param site_id The globally unique site id of the node.
    * @param positions The positions array used to determine the globally unique positions for the in the document.
    */
-  explicit CRDTCharacter(char value, int counter, std::string &site_id, std::vector<long> &positions);
+  explicit CRDTCharacter(char value, int counter, std::string &site_id, std::vector<std::pair<long, std::string>> &positions);
 
   /*!
    * @brief Getter for the value character.
@@ -55,11 +55,11 @@ class CRDTCharacter {
    * @brief Getter for the positions array that define the globally unique position.
    * @return The positions array which can be used to determine the position of the array in document.
    */
-  const std::vector<long> &GetPositions() const;
+  const std::vector<std::pair<long, std::string>> &GetPositions() const;
 
   /*!
    * @brief This method compares positions of the current CRDTCharacter with another CRDTCharacter.
-   * @details The method returns an int
+   * @details The method only compares positions array to determine the greater and smaller.
    * @param other_character The other character to which current character's position is to be compared.
    * @return An integer. 0 if the character positions are same, 1 if the current character should come after the
    * other_character, -1 if the current character should appear before the other_character.
