@@ -50,8 +50,8 @@ void UDPClient::BroadcastActionToAllConnectedPeers(CRDTAction &crdt_action, std:
   packet << crdt_action.Operation() << crdt_action.SiteId() << crdt_action.Counter() << crdt_action.Text() <<
          (int) crdt_action.Positions().size();
 
-  for (long position:crdt_action.Positions()) {
-    packet << (sf::Int64) position;
+  for (const std::pair<long, std::string>& position:crdt_action.Positions()) {
+    packet << (sf::Int64) position.first << position.second;
   }
   packet << site_id << site_counter;
 
@@ -67,7 +67,7 @@ void UDPClient::HandleIncomingPacket(sf::Packet &packet) {
   int counter; // site counter of the peer that created this operation
   std::string text;
   int positions_size;
-  std::vector<long> positions;
+  std::vector<std::pair<long, std::string>> positions;
   std::string sender_site_id; // site id for the peer that sent this operation
   int sender_counter; // site counter for the peer that sent this operation.
 
@@ -75,8 +75,9 @@ void UDPClient::HandleIncomingPacket(sf::Packet &packet) {
 
   for (int i = 0; i < positions_size; i++) {
     sf::Int64 position;
-    packet >> position;
-    positions.push_back((long) position);
+    std::string position_site_id;
+    packet >> position >> position_site_id;
+    positions.emplace_back((long) position, position_site_id);
   }
   packet >> sender_site_id >> sender_counter;
   CRDTAction crdt_action((CRDTOperation) operation, site_id, counter, text, positions);

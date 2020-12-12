@@ -54,7 +54,7 @@ struct CRDTAction {
              std::string &site_id, // site_id of the client that is responsible for originally creating the operation.
              int counter, // site counter of the client that is responsible for originally creating the operation.
              std::string &text,
-             std::vector<long> &positions)
+             std::vector<std::pair<long, std::string>> &positions)
       : operation(operation), site_id(site_id), counter(counter), text(text), positions(positions) {
   }
 
@@ -95,7 +95,7 @@ struct CRDTAction {
     return text;
   }
 
-  std::vector<long> Positions() const {
+  std::vector<std::pair<long, std::string>> Positions() const {
     return positions;
   }
 
@@ -106,8 +106,8 @@ struct CRDTAction {
         .append("counter").append("\t").append(std::to_string(counter)).append("\n")
         .append("text").append("\t").append(text).append("\n")
         .append("positions").append("\t");
-    for (long position:positions) {
-      crdt_action_str.append(std::to_string(position)).append("\t");
+    for (const std::pair<long, std::string> &position:positions) {
+      crdt_action_str.append(std::to_string(position.first)).append("\t");
     }
     return crdt_action_str.append("\n");
   }
@@ -117,7 +117,7 @@ struct CRDTAction {
   std::string site_id; // unique id of the client
   int counter; // site counter managed by version vector
   std::string text; // value of the string (current support for single chars) to be inserted.
-  std::vector<long> positions; // fractional position calculated by CRDT.
+  std::vector<std::pair<long, std::string>> positions; // fractional position calculated by CRDT.
 };
 
 struct PeerAddress {

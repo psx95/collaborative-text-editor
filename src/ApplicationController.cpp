@@ -29,8 +29,8 @@ void ApplicationController::OnLocalInsert(sf::String &text, int index) {
   version_vector.IncrementSiteCounter();
   struct CRDTAction
       insert_action = crdt_manager.GenerateCRDTActionForLocalInsert(text[0], index, version_vector.GetSiteCounter());
-  for (int position : insert_action.Positions()) {
-    std::cout << position << ",";
+  for (const std::pair<long, std::string>& position : insert_action.Positions()) {
+    std::cout << position.first << ",";
   }
   std::cout << std::endl;
   std::cout << "Editor Callback: local insert " << text.toAnsiString() << " at " << index << std::endl;

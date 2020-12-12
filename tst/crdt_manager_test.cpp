@@ -60,13 +60,13 @@ bool IsCharacterUniqueInCRDT(CRDTCharacter &crdt_character, int index) {
   for (int i = 0; i < crdt_manager->GetCRDTCharacters()->size(); i++) {
     if (i != index && crdt_character.ComparePositionTo(crdt_manager->GetCRDTCharacters()->at(i)) == 0) {
       std::cout << "Original Character position " << index << std::endl;
-      for (int position :crdt_character.GetPositions()) {
-        std::cout << position << ",";
+      for (const std::pair<long, std::string> &position :crdt_character.GetPositions()) {
+        std::cout << position.first << ",";
       }
       std::cout << std::endl;
       std::cout << " Position " << i << std::endl;
-      for (int position : crdt_manager->GetCRDTCharacters()->at(i).GetPositions()) {
-        std::cout << position << ",";
+      for (const std::pair<long, std::string> &position : crdt_manager->GetCRDTCharacters()->at(i).GetPositions()) {
+        std::cout << position.first << ",";
       }
       std::cout << std::endl;
       return false;
