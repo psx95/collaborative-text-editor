@@ -41,14 +41,6 @@ void EditorContent::DeleteCharacterFromCursorPosition(int number_of_characters) 
   callbacks->OnLocalDelete(deleted_position);
 }
 
-std::string EditorContent::GetStringContent() {
-
-}
-
-std::vector<int> &EditorContent::GetLinePositions() {
-
-}
-
 void EditorContent::MoveCursorRight() {
   if (this->cursor.GetLineNumber() >= this->text_document.GetNumberOfTotalLines()) {
     return;
