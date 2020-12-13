@@ -34,7 +34,6 @@ void EditorWindow::UpdateEvents() {
   while (editor_window->pollEvent(event)) {
     if (event.type == sf::Event::Closed) {
       CloseWindow();
-      std::cout << "Event is " << event.type << std::endl;
       break;
     } else if (event.type == sf::Event::Resized) {
       editor_view->SetViewBounds(event.size.width, event.size.height);

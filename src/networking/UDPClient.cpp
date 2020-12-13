@@ -20,7 +20,6 @@ void UDPClient::Init() {
 }
 
 void UDPClient::StartListeningThread() {
-  std::cout << "Listening " << std::endl;
   client_listening.store(true, std::memory_order_relaxed);
 
   while (client_listening.load(std::memory_order_relaxed)) {
@@ -40,7 +39,7 @@ void UDPClient::HandleOutgoingPacket(sf::Packet packet, PeerAddress peer_address
   sf::Socket::Status status = client_socket.send(packet, peer_address.ip_address, peer_address.port);
 
   if (status != sf::Socket::Status::Done) {
-    std::cout << "Broadcast Error" << "\t" << status << "\t" << "ip" << "\t" << peer_address.ip_address << "port"
+    std::cerr << "Broadcast Error" << "\t" << status << "\t" << "ip" << "\t" << peer_address.ip_address << "port"
               << "\t" << peer_address.port;
   }
 }
@@ -81,7 +80,7 @@ void UDPClient::HandleIncomingPacket(sf::Packet &packet) {
   }
   packet >> sender_site_id >> sender_counter;
   CRDTAction crdt_action((CRDTOperation) operation, site_id, counter, text, positions);
-  //std::cout << crdt_action.ToString();
+
   client_callbacks->OnRemoteOperationReceive(crdt_action, sender_site_id, sender_counter);
 }
 
