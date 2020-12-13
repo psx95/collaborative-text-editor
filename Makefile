@@ -7,7 +7,7 @@ INCLUDE=-I./include/
 TARGET := collaborative_text_editor collaborative_text_editor_test
 
 SOURCE := ./src/crdt/*.cpp ./src/editor/*.cpp ./src/exceptions/*.cpp ./src/networking/*.cpp ./src/version_vector/*.cpp src/ApplicationController.cpp
-TEST_SOURCE := ./tst/*.cpp
+TEST_SOURCE := ./tst/*.cpp ./tst/mock_models/*.cpp
 
 all: $(TARGET)
 
