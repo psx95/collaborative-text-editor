@@ -56,30 +56,35 @@ std::string &CRDTManager::GetSiteId() const {
 //================================================================================
 
 CRDTCharacter CRDTManager::GenerateCRDTCharacter(char c, int position_in_doc, int site_counter) {
-  std::vector<long> position_before = GeneratePositionBefore(position_in_doc);
-  std::vector<long> position_after = GeneratePositionAfter(position_in_doc);
-  std::vector<long> new_position;
+  std::vector<std::pair<long, std::string>> position_before = GeneratePositionBefore(position_in_doc);
+  std::vector<std::pair<long, std::string>> position_after = GeneratePositionAfter(position_in_doc);
+  std::vector<std::pair<long, std::string>> new_position;
   GeneratePositionBetween(position_before, position_after, new_position);
   return CRDTCharacter(c, site_counter, this->site_id, new_position);
 }
 
-std::vector<long> CRDTManager::GeneratePositionBetween(std::vector<long> &before,
-                                                       std::vector<long> &after,
-                                                       std::vector<long> &generated_position,
-                                                       int depth) {
+std::vector<std::pair<long, std::string>> CRDTManager::GeneratePositionBetween(std::vector<std::pair<long,
+                                                                                                     std::string>> &before,
+                                                                               std::vector<std::pair<long,
+                                                                                                     std::string>> &after,
+                                                                               std::vector<std::pair<long,
+                                                                                                     std::string>> &generated_position,
+                                                                               int depth) {
   int base = (int) std::pow(base_exp, depth) * this->starting_base;
   CRDTAllocationStrategy strategy_at_depth = GetAllocationStrategyForDepth(depth);
   // if no positions, then probably its a new level and in a new level, the available identifiers can go from 0 to
   // base size computed for that level (base size is exponentially increased at each level)
-  long current_level_from_before_position = !before.empty() ? before.at(0) : 0;
-  long current_level_from_after_position = !after.empty() ? after.at(0) : base;
-  long interval_between_positions = current_level_from_after_position - current_level_from_before_position;
+  std::pair<long, std::string> current_level_from_before_position =
+      !before.empty() ? before.at(0) : std::pair<long, std::string>(0, this->site_id);
+  std::pair<long, std::string> current_level_from_after_position =
+      !after.empty() ? after.at(0) : std::pair<long, std::string>(base, this->site_id);
+  long interval_between_positions = current_level_from_after_position.first - current_level_from_before_position.first;
   if (interval_between_positions > 1) {
     // we have enough space to add a new character without increasing depth of the tree
     // generate a new position based on strategy
-    long new_position = GenerateNewPositionIdentifier(current_level_from_before_position,
-                                                      current_level_from_after_position,
-                                                      strategy_at_depth);
+    std::pair<long, std::string> new_position = GenerateNewPositionIdentifier(current_level_from_before_position.first,
+                                                                              current_level_from_after_position.first,
+                                                                              strategy_at_depth);
     generated_position.push_back(new_position);
     return generated_position;
   } else if (interval_between_positions == 1) {
@@ -88,35 +93,54 @@ std::vector<long> CRDTManager::GeneratePositionBetween(std::vector<long> &before
     if (!before.empty()) {
       before.erase(before.begin());
     }
-    std::vector<long> vector;
-    GeneratePositionBetween(before, vector, generated_position, depth + 1);
+    std::vector<std::pair<long, std::string>> vector;
+    return GeneratePositionBetween(before, vector, generated_position, depth + 1);
   } else if (interval_between_positions == 0) {
     // the start and end positions are the same, so have not yet reached the bottom of the tree (required depth) to make
     // decision about adding new level/inserting the character.
-    generated_position.push_back(current_level_from_before_position);
-    if (!before.empty()) {
-      before.erase(before.begin());
+
+    // for the rare case where the random numbers generated as identifiers on different machines end up to be the same
+    // In case of the same position array (with the same number and same digits, site id is used as tie breaker)
+    // The position identifier pair with a smaller site ID will be inserted before the one with higher site Id.
+    if (current_level_from_before_position.second < current_level_from_after_position.second) {
+      generated_position.push_back(current_level_from_before_position);
+      if (!before.empty()) {
+        before.erase(before.begin());
+      }
+      std::vector<std::pair<long, std::string>> vector;
+      return GeneratePositionBetween(before, vector, generated_position, depth + 1);
+    } else if (current_level_from_before_position.second == current_level_from_after_position.second) {
+      std::cout << " same character same site id " << std::endl;
+      generated_position.push_back(current_level_from_before_position);
+      if (!before.empty()) {
+        before.erase(before.begin());
+      }
+      if (!after.empty()) {
+        after.erase(after.begin());
+      }
+      return GeneratePositionBetween(before, after, generated_position, depth + 1);
+    } else {
+      // should the control reach here, then something is wrong, since it would suggest that the CRDT characters are not
+      // stored in a sorted fashion. Binary search is used to find incoming insert positions, which would also be
+      // invalidated
+      throw CustomMessageException("CRDT Array not in a sorted fashion!");
     }
-    if (!after.empty()) {
-      after.erase(after.begin());
-    }
-    GeneratePositionBetween(before, after, generated_position, depth + 1);
   }
-  return std::vector<long>();
+  return std::vector<std::pair<long, std::string>>();
 }
 
-std::vector<long> CRDTManager::GeneratePositionBefore(int index) {
+std::vector<std::pair<long, std::string>> CRDTManager::GeneratePositionBefore(int index) {
   ThrowCustomExceptionOnNegativeIndex(index);
   if (index == 0) {
-    return std::vector<long>();
+    return std::vector<std::pair<long, std::string>>();
   }
   return this->characters->at(index - 1).GetPositions();
 }
 
-std::vector<long> CRDTManager::GeneratePositionAfter(int index) {
+std::vector<std::pair<long, std::string>> CRDTManager::GeneratePositionAfter(int index) {
   ThrowCustomExceptionOnNegativeIndex(index);
   if (index >= this->characters->size()) {
-    return std::vector<long>();
+    return std::vector<std::pair<long, std::string>>();
   }
   return this->characters->at(index).GetPositions();
 }
@@ -136,9 +160,9 @@ CRDTAllocationStrategy CRDTManager::GetAllocationStrategyForDepth(int depth) {
   return map_pos->second;
 }
 
-long CRDTManager::GenerateNewPositionIdentifier(long minimum,
-                                                long maximum,
-                                                CRDTAllocationStrategy allocation_strategy) const {
+std::pair<long, std::string> CRDTManager::GenerateNewPositionIdentifier(long minimum,
+                                                                        long maximum,
+                                                                        CRDTAllocationStrategy allocation_strategy) const {
   // generate a random number between max & minimum, but within boundary
   std::random_device rd;
   std::mt19937_64 gen(rd());
@@ -161,7 +185,7 @@ long CRDTManager::GenerateNewPositionIdentifier(long minimum,
   // max & min are both set according to strategy, find a random number in between
   // better would be to create a uniform distribution of ints, and choose a number from them, but doing this so as to
   // avoid creating a new uniform distribution object.
-  return (int) std::floor(random_number(gen) * (float) (maximum - minimum)) + minimum;
+  return {(int) std::floor(random_number(gen) * (float) (maximum - minimum)) + minimum, this->site_id};
 }
 
 int CRDTManager::FindRemoteInsertPosition(CRDTCharacter remote_character) {
@@ -196,7 +220,8 @@ int CRDTManager::FindRemoteDeletePosition(CRDTCharacter remote_character) {
   int start = 0;
   int end = (int) this->characters->size() - 1;
   if (this->characters->empty()) {
-    throw CustomMessageException("Character to delete not present in CRDT. CRDT empty!");
+    std::cerr << "Character to delete not present in CRDT. CRDT empty!" << std::endl;
+    return -1;
   }
   while ((start + 1) < end) {
     int mid = std::floor(start + (end - start) / 2);

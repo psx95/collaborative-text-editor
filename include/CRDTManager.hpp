@@ -17,7 +17,7 @@
  * @details The most important function for this class is to generate CRDTActions for local insert/delete operations
  * and the converting incoming CRDTs (Conflict Free Replicated Data Type) to their corresponding local actions, along
  * with maintaining a log of the operations.
- * Algorithm used for allocation for globally unique indices is called \ref https://hal.archives-ouvertes.fr/hal-00921633/document [("LSEQ")]
+ * Algorithm used for allocation for globally unique sequences is called \ref https://hal.archives-ouvertes.fr/hal-00921633/document [("LSEQ")]
  * and is adapted from the paper mentioned in the link.
  */
 class CRDTManager {
@@ -45,17 +45,20 @@ class CRDTManager {
    * @param after A vector of longs, defining the position before which the new character needs to be inserted.
    * @param [out] generated_position The array containing newly generated position for the character.
    * @param depth The depth of the internal tree-like structure (actually represented using the vectors).
-   * @return A vector of longs, defining the globally unique position of the character that needed to be inserted.
+   * @return A vector of identifier pairs, defining the globally unique position of the character that needed to be inserted.
    */
-  std::vector<long> GeneratePositionBetween(std::vector<long> &before,
-                                            std::vector<long> &after,
-                                            std::vector<long> &generated_position,
-                                            int depth = 0);
+  std::vector<std::pair<long, std::string>> GeneratePositionBetween(std::vector<std::pair<long, std::string>> &before,
+                                                                    std::vector<std::pair<long, std::string>> &after,
+                                                                    std::vector<std::pair<long,
+                                                                                          std::string>> &generated_position,
+                                                                    int depth = 0);
 
-  std::vector<long> GeneratePositionBefore(int index);
-  std::vector<long> GeneratePositionAfter(int index);
+  std::vector<std::pair<long, std::string>> GeneratePositionBefore(int index);
+  std::vector<std::pair<long, std::string>> GeneratePositionAfter(int index);
   CRDTAllocationStrategy GetAllocationStrategyForDepth(int depth);
-  long GenerateNewPositionIdentifier(long minimum, long maximum, CRDTAllocationStrategy allocation_strategy) const;
+  std::pair<long, std::string> GenerateNewPositionIdentifier(long minimum,
+                                                             long maximum,
+                                                             CRDTAllocationStrategy allocation_strategy) const;
 
   int FindRemoteInsertPosition(CRDTCharacter remote_character);
   int FindRemoteDeletePosition(CRDTCharacter remote_character);
@@ -69,7 +72,7 @@ class CRDTManager {
   explicit CRDTManager(std::string &site_id);
 
   /*!
-   * @brief This method generates a CRDTAction which can be sent to other connected peers for an insert operation.
+   * @brief This method generates a CRDTAction whichcharacters  can be sent to other connected peers for an insert operation.
    * @details CRDTAction should be generated for each local insert.
    * @param c The actual character value which was inserted by the user.
    * @param index The index in the actual content string at which the character was inserted.

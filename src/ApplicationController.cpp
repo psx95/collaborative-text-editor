@@ -31,12 +31,17 @@ void ApplicationController::OnLocalInsert(sf::String &text, int index) {
       insert_action = crdt_manager.GenerateCRDTActionForLocalInsert(text[0], index, version_vector.GetSiteCounter());
 
   std::cout << "[Local]  [Insert] " << index << ":" << text.toAnsiString() << std::endl;
+
   udp_client.BroadcastActionToAllConnectedPeers(insert_action,
                                                 crdt_manager.GetSiteId(),
                                                 version_vector.GetSiteCounter());
 }
 
 void ApplicationController::OnLocalDelete(int index) {
+  if (index < 0 || index >= crdt_manager.GetCRDTCharacters()->size()) {
+    std::cerr << "Invalid Index " << index << " for local delete " << std::endl;
+    return;
+  }
   version_vector.IncrementSiteCounter();
   struct CRDTAction
       delete_action = crdt_manager.GenerateCRDTActionForLocalDelete(index, version_vector.GetSiteCounter());
@@ -71,6 +76,7 @@ void ApplicationController::OnRemoteOperationReceive(struct CRDTAction &crdt_act
 void ApplicationController::OnRemoteInsertReceive(struct CRDTAction &crdt_action,
                                                   std::string &sender_site_id,
                                                   int sender_site_counter) {
+
   std::pair<std::string, int> insert_info = crdt_manager.GenerateStringInsertInfoFromRemoteInsert(crdt_action);
   std::cout << "[Remote] [Insert] " << insert_info.second << ":" << insert_info.first << std::endl;
 
