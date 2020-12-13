@@ -111,9 +111,6 @@ class EditorContent {
 
   void InsertTextAtPosition(std::string &text, int position);
 
-  std::string GetStringContent();
-  std::vector<int> &GetLinePositions();
-
 };
 
 #endif //COLLABORATIVE_TEXT_EDITOR_SRC_EDITOR_EDITORCONTENT_HPP_
