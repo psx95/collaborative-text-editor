@@ -28,7 +28,9 @@ TEST_CASE("version vector processes incoming actions") {
   std::string other_site_id("cfe26694-8e79-408f-9df3-ff6642ead6ad");
   VersionVector version_vector(site_id);
   std::string text("A");
-  std::vector<long> vector(0);
+  std::pair<long, std::string> pair = std::make_pair(0, site_id);
+  std::vector<std::pair<long, std::string>> vector;
+  vector.push_back(pair);
 
   REQUIRE(version_vector.GetSiteCounter() == -1);
 
@@ -174,7 +176,9 @@ TEST_CASE("version vector ignores duplicate actions") {
   std::string other_site_id("cfe26694-8e79-408f-9df3-ff6642ead6ad");
   VersionVector version_vector(site_id);
   std::string text("A");
-  std::vector<long> vector(0);
+  std::pair<long, std::string> pair = std::make_pair(0, site_id);
+  std::vector<std::pair<long, std::string>> vector;
+  vector.push_back(pair);
 
   REQUIRE(version_vector.GetSiteCounter() == -1);
 
