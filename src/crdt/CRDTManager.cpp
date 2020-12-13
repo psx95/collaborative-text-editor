@@ -110,7 +110,6 @@ std::vector<std::pair<long, std::string>> CRDTManager::GeneratePositionBetween(s
       std::vector<std::pair<long, std::string>> vector;
       return GeneratePositionBetween(before, vector, generated_position, depth + 1);
     } else if (current_level_from_before_position.second == current_level_from_after_position.second) {
-      std::cout << " same character same site id " << std::endl;
       generated_position.push_back(current_level_from_before_position);
       if (!before.empty()) {
         before.erase(before.begin());
