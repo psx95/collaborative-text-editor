@@ -58,4 +58,7 @@ than writing a full-fledged Makefile and you can configure CMake to run differen
 6. from the root of `bin` folder run `cmake..` to generate the CMake build files.
 7. you should now see a lot of generated output including a generated Makefile in the bin folder.
 8. simply run `make` to run the MakeFile to get the executable.
-9. execute the generated executable as you would for a normal C++ based program `./collaborative-text-editor`. 
+9. execute the generated executable as you would for a normal C++ based program `./collaborative-text-editor`.
+
+#### References
+The source code in this project was heavily inspired by the excellent research & material provided by the [Conclave Case Study](https://conclave-team.github.io/conclave-site/).
